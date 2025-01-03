@@ -6,6 +6,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
         * {
             margin: 0;
@@ -83,7 +84,7 @@
             color: white;
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 1.5rem;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'gendy', sans-serif;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
@@ -91,7 +92,7 @@
             font-family: 'Roboto', sans-serif;
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: bold;
-            background: linear-gradient(45deg, #bf893e, #c1a894, #528cdf, #4d71ad);
+            background: linear-gradient(165deg, #4d71ad, #528cdf, #c1a894, #bf893e);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -101,7 +102,7 @@
 
         .typing-container {
             color: white;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'gendy', sans-serif;
             font-size: clamp(1.5rem, 3vw, 2.5rem);
         }
 
@@ -120,22 +121,39 @@
             perspective: 1000px;
         }
 
-        .profile-pic {
+        .parallax-wrapper {
+            position: relative;
             width: min(400px, 90vw);
             height: min(400px, 90vw);
             border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-            transition: all 0.5s ease;
-            transform-style: preserve-3d;
-            object-fit: cover;
+            overflow: hidden;
         }
 
-        .profile-pic:hover {
-            transform: rotate3d(1, 1, 0, 20deg) scale(1.05);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.5),
-                        0 0 100px rgba(70, 200, 255, 0.3);
-            border-color: #46c8ff;
+        .profile-pic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s ease-out;
+        }
+
+        .background-img {
+            border: 4px solid white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transform: scale(1.2);
+        }
+
+            .background-img:hover {
+                transform: scale(1.6);
+                box-shadow: 0 0 50px rgba(255, 255, 255, 0.5), 0 0 100px rgba(70, 200, 255, 0.3);
+                border-color: #46c8ff;
+            }
+
+        .foreground-img {
+            pointer-events: none;
+            margin-top: 10px;
         }
 
         @@keyframes blink {
@@ -150,20 +168,17 @@
                 flex-direction: column-reverse;
                 padding: 1rem;
                 text-align: center;
-                min-height: 100svh; /* Use small viewport height for mobile */
+                min-height: 100svh;
+               margin-top: 0px !important;
             }
 
             .text-content {
                 padding: 1rem;
             }
 
-            .profile-pic {
+            .parallax-wrapper {
                 width: min(300px, 80vw);
                 height: min(300px, 80vw);
-            }
-
-            .profile-pic:hover {
-                transform: none;
             }
         }
 
@@ -173,7 +188,7 @@
                 padding: 1.5rem;
             }
 
-            .profile-pic {
+            .parallax-wrapper {
                 width: 350px;
                 height: 350px;
             }
@@ -186,7 +201,7 @@
                 padding: 1rem;
             }
 
-            .profile-pic {
+            .parallax-wrapper {
                 width: min(250px, 40vh);
                 height: min(250px, 40vh);
             }
@@ -194,8 +209,8 @@
     </style>
 </head>
 <body>
-    <div class="starfield-container full-page" id="myStarfield"></div>
-    <div class="main-container">
+    <div class="starfield-container" id="myStarfield"></div>
+    <div class="main-container" style="margin-top: -60px;">
         <div class="text-content">
             <h1 class="welcome-message">Greetings cyber citizen!</h1>
             <div class="name-text">My name is Sauraav Jayrajh.</div>
@@ -204,10 +219,16 @@
             </div>
         </div>
         <div class="profile-container">
-            <img src="~/images/ProfPFP_Square_1.png" alt="Profile Picture" class="profile-pic">
+            <div class="parallax-wrapper">
+                <img src="~/images/PFP_No_Me.png" alt="Background" class="profile-pic background-img">
+                <img src="~/images/PFP_With_Me.png" alt="Profile Picture" class="profile-pic foreground-img">
+            </div>
         </div>
     </div>
+    <div class="min-vh-100"></div>
+
     <script src="~/js/stars_bg.js" asp-append-version="true"></script>
     <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
+    <script src="~/js/parallax.js" asp-append-version="true"></script>
 </body>
 </html>

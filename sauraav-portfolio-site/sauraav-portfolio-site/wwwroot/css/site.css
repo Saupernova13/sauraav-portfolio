@@ -1,0 +1,68 @@
+@font-face {
+    font-family: 'grawust';
+    src: url('/fonts/Grawust.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'navieo';
+    src: url('../fonts/navieo trial.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'ottineslab';
+    src: url('../fonts/ottineslab-regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'streetCred';
+    src: url('../fonts/street cred.otf') format('opentype');
+}
+@font-face {
+    font-family: 'suika';
+    src: url('../fonts/suika-demo.otf') format('opentype');
+}
+@font-face {
+    font-family: 'crostan-bold';
+    src: url('../fonts/crostan-bold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'crostan-light';
+    src: url('../fonts/crostan-light.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'crostan-medium';
+    src: url('../fonts/crostan-medium.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'crostan-regular';
+    src: url('../fonts/crostan-regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'crostan-semibold';
+    src: url('../fonts/crostan-semibold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'daypon-regular';
+    src: url('../fonts/daypon-regular.otf') format('opentype');
+}
+@font-face {
+    font-family: 'forrest-gallery';
+    src: url('../fonts/forrest-gallery-demo.otf') format('opentype');
+}
+@font-face {
+    font-family: 'gendy';
+    src: url('../fonts/gendy.otf') format('opentype');
+}
+@font-face {
+    font-family: 'linetical';
+    src: url('../fonts/linetical-demo.otf') format('opentype');
+}
+@font-face {
+    font-family: 'retro_floral';
+    src: url('../fonts/retro floral.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'techbit';
+    src: url('../fonts/techbit demo.otf') format('opentype');
+}
+@font-face {
+    font-family: 'wanafi';
+    src: url('../fonts/wanafi.ttf') format('truetype');
+}
