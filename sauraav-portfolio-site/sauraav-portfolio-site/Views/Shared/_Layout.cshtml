@@ -7,8 +7,107 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/sauraav_portfolio_site.styles.css" asp-append-version="true" />
+    <style>
+        header {
+            transition: transform 0.3s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        @@media (min-width: 768px) {
+            /* Desktop styles */
+            .hover-area {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                z-index: 999;
+            }
+
+            .hide-header header {
+                transform: translateY(-100%);
+            }
+
+            .neon-line {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                z-index: 998;
+                opacity: 0;
+                transition: opacity 0.3s ease-in-out;
+            }
+
+            .neon-line::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                    background: #bf893e;
+                    box-shadow: 0 0 5px #bf893e, 0 0 10px #bf893e, 0 0 20px #bf893e, 0 0 40px #bf893e;
+                animation: neon-pulse 1.5s ease-in-out infinite;
+            }
+
+            .hide-header .neon-line {
+                opacity: 1;
+            }
+
+            @@keyframes neon-pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+
+            .neon-line, .hover-area {
+                cursor: pointer;
+            }
+        }
+
+        /* Mobile optimizations */
+        @@media (max-width: 767px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+                padding: 0.5rem 0;
+            }
+
+            .container-fluid {
+                padding: 0 10px;
+            }
+
+            .navbar {
+                padding: 0.5rem 0;
+            }
+
+            .hover-area, .neon-line {
+                display: none;
+            }
+
+            header {
+                position: sticky;
+                transform: none !important;
+            }
+
+            body {
+                padding-top: 0 !important;
+            }
+        }
+
+        body {
+            padding-top: 60px;
+        }
+    </style>
 </head>
-<body>
+<body class="hide-header">
+    <div class="neon-line"></div>
+    <div class="hover-area"></div>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -30,14 +129,17 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3" style="pointer-events: none;">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/_layout.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

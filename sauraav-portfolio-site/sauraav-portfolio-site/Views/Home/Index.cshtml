@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,7 +16,19 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        .floating-word {
+            position: absolute;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0.7;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            will-change: transform;
+            transition: transform 0.2s ease-out;
         }
 
         .starfield-container {
@@ -47,149 +61,153 @@
             pointer-events: none;
         }
 
-        .cursor {
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.2);
+        .main-container {
+            position: relative;
+            min-height: 100vh;
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .text-content {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .welcome-message {
+            color: white;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .name-text {
+            font-family: 'Roboto', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #bf893e, #c1a894, #528cdf, #4d71ad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .typing-container {
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+        }
+
+        .typing-text {
+            display: inline;
+            border-right: 3px solid white;
+            padding-right: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        .profile-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .profile-pic {
+            width: min(400px, 90vw);
+            height: min(400px, 90vw);
             border-radius: 50%;
-            position: absolute;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
+            border: 4px solid white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+            object-fit: cover;
+        }
+
+        .profile-pic:hover {
+            transform: rotate3d(1, 1, 0, 20deg) scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.5),
+                        0 0 100px rgba(70, 200, 255, 0.3);
+            border-color: #46c8ff;
+        }
+
+        @@keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* Mobile Styles */
+        @@media (max-width: 768px) {
+            .main-container {
+                flex-direction: column-reverse;
+                padding: 1rem;
+                text-align: center;
+                min-height: 100svh; /* Use small viewport height for mobile */
+            }
+
+            .text-content {
+                padding: 1rem;
+            }
+
+            .profile-pic {
+                width: min(300px, 80vw);
+                height: min(300px, 80vw);
+            }
+
+            .profile-pic:hover {
+                transform: none;
+            }
+        }
+
+        /* Tablet Styles */
+        @@media (min-width: 769px) and (max-width: 1024px) {
+            .main-container {
+                padding: 1.5rem;
+            }
+
+            .profile-pic {
+                width: 350px;
+                height: 350px;
+            }
+        }
+
+        /* Landscape Mode */
+        @@media (max-height: 600px) and (orientation: landscape) {
+            .main-container {
+                flex-direction: row;
+                padding: 1rem;
+            }
+
+            .profile-pic {
+                width: min(250px, 40vh);
+                height: min(250px, 40vh);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="starfield-container full-page" id="myStarfield">
+    <div class="starfield-container full-page" id="myStarfield"></div>
+    <div class="main-container">
+        <div class="text-content">
+            <h1 class="welcome-message">Greetings cyber citizen!</h1>
+            <div class="name-text">My name is Sauraav Jayrajh.</div>
+            <div class="typing-container">
+                I'm <span class="typing-text"></span>
+            </div>
+        </div>
+        <div class="profile-container">
+            <img src="~/images/ProfPFP_Square_1.png" alt="Profile Picture" class="profile-pic">
+        </div>
     </div>
-    <script>
-        class Starfield {
-            constructor(containerId, options = {}) {
-                this.options = {
-                    starCount: 200,
-                    mouseForceRadius: 150,
-                    mouseForceStrength: 1,
-                    baseMovementSpeed: 0.5,
-                    fps: 60,
-                    ...options
-                };
-
-                this.container = document.getElementById(containerId);
-                this.width = this.container.offsetWidth;
-                this.height = this.container.offsetHeight;
-                this.mouseX = 0;
-                this.mouseY = 0;
-                this.stars = [];
-                this.frameInterval = 1000 / this.options.fps;
-                this.lastTime = 0;
-
-                this.starsContainer = document.createElement('div');
-                this.starsContainer.className = 'stars';
-                this.cursor = document.createElement('div');
-                this.cursor.className = 'cursor';
-
-                this.container.appendChild(this.starsContainer);
-                this.container.appendChild(this.cursor);
-
-                this.init();
-            }
-
-            init() {
-                // Create stars
-                for (let i = 0; i < this.options.starCount; i++) {
-                    this.stars.push(new Star(this));
-                }
-
-                // Event listeners
-                document.addEventListener('mousemove', this.handleMouseMove.bind(this));
-                window.addEventListener('resize', this.handleResize.bind(this));
-
-                // Start animation
-                this.animate(0);
-            }
-
-            handleMouseMove(e) {
-                const rect = this.container.getBoundingClientRect();
-                this.mouseX = e.clientX - rect.left;
-                this.mouseY = e.clientY - rect.top;
-                this.cursor.style.left = `${this.mouseX}px`;
-                this.cursor.style.top = `${this.mouseY}px`;
-            }
-
-            handleResize() {
-                this.width = this.container.offsetWidth;
-                this.height = this.container.offsetHeight;
-                this.stars.forEach(star => star.resetPosition());
-            }
-
-            animate(currentTime) {
-                requestAnimationFrame(this.animate.bind(this));
-
-                const deltaTime = currentTime - this.lastTime;
-                if (deltaTime < this.frameInterval) return;
-
-                this.lastTime = currentTime - (deltaTime % this.frameInterval);
-                this.stars.forEach(star => star.update());
-            }
-        }
-
-        class Star {
-            constructor(starfield) {
-                this.starfield = starfield;
-                this.element = document.createElement('div');
-                this.element.className = 'star';
-
-                this.size = Math.random() * 2 + 0.5;
-                this.element.style.width = `${this.size}px`;
-                this.element.style.height = `${this.size}px`;
-                this.element.style.opacity = Math.random() * 0.8 + 0.2;
-
-                this.resetPosition();
-                this.starfield.starsContainer.appendChild(this.element);
-            }
-
-            resetPosition() {
-                this.x = Math.random() * this.starfield.width;
-                this.y = Math.random() * this.starfield.height;
-                this.vx = (Math.random() - 0.5) * this.starfield.options.baseMovementSpeed;
-                this.vy = (Math.random() - 0.5) * this.starfield.options.baseMovementSpeed;
-            }
-
-            update() {
-                // Base movement
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // Screen wrapping
-                if (this.x < 0) this.x = this.starfield.width;
-                if (this.x > this.starfield.width) this.x = 0;
-                if (this.y < 0) this.y = this.starfield.height;
-                if (this.y > this.starfield.height) this.y = 0;
-
-                // Mouse force influence
-                const dx = this.starfield.mouseX - this.x;
-                const dy = this.starfield.mouseY - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < this.starfield.options.mouseForceRadius) {
-                    const force = (this.starfield.options.mouseForceRadius - distance) *
-                        this.starfield.options.mouseForceStrength;
-                    const angle = Math.atan2(dy, dx);
-                    this.x -= Math.cos(angle) * force * 0.1;
-                    this.y -= Math.sin(angle) * force * 0.1;
-                }
-
-                this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
-            }
-        }
-
-        // Initialize starfield
-        const myStarfield = new Starfield('myStarfield', {
-            starCount: 200,
-            mouseForceRadius: 150,
-            mouseForceStrength: 1,
-            baseMovementSpeed: 0.5,
-            fps: 60
-        });
-    </script>
+    <script src="~/js/stars_bg.js" asp-append-version="true"></script>
+    <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
 </body>
 </html>
