@@ -1,0 +1,195 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .starfield-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            will-change: transform;
+            transition: transform 0.2s ease-out;
+            pointer-events: none;
+        }
+
+        .cursor {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield-container full-page" id="myStarfield">
+    </div>
+    <script>
+        class Starfield {
+            constructor(containerId, options = {}) {
+                this.options = {
+                    starCount: 200,
+                    mouseForceRadius: 150,
+                    mouseForceStrength: 1,
+                    baseMovementSpeed: 0.5,
+                    fps: 60,
+                    ...options
+                };
+
+                this.container = document.getElementById(containerId);
+                this.width = this.container.offsetWidth;
+                this.height = this.container.offsetHeight;
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.stars = [];
+                this.frameInterval = 1000 / this.options.fps;
+                this.lastTime = 0;
+
+                this.starsContainer = document.createElement('div');
+                this.starsContainer.className = 'stars';
+                this.cursor = document.createElement('div');
+                this.cursor.className = 'cursor';
+
+                this.container.appendChild(this.starsContainer);
+                this.container.appendChild(this.cursor);
+
+                this.init();
+            }
+
+            init() {
+                // Create stars
+                for (let i = 0; i < this.options.starCount; i++) {
+                    this.stars.push(new Star(this));
+                }
+
+                // Event listeners
+                document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                window.addEventListener('resize', this.handleResize.bind(this));
+
+                // Start animation
+                this.animate(0);
+            }
+
+            handleMouseMove(e) {
+                const rect = this.container.getBoundingClientRect();
+                this.mouseX = e.clientX - rect.left;
+                this.mouseY = e.clientY - rect.top;
+                this.cursor.style.left = `${this.mouseX}px`;
+                this.cursor.style.top = `${this.mouseY}px`;
+            }
+
+            handleResize() {
+                this.width = this.container.offsetWidth;
+                this.height = this.container.offsetHeight;
+                this.stars.forEach(star => star.resetPosition());
+            }
+
+            animate(currentTime) {
+                requestAnimationFrame(this.animate.bind(this));
+
+                const deltaTime = currentTime - this.lastTime;
+                if (deltaTime < this.frameInterval) return;
+
+                this.lastTime = currentTime - (deltaTime % this.frameInterval);
+                this.stars.forEach(star => star.update());
+            }
+        }
+
+        class Star {
+            constructor(starfield) {
+                this.starfield = starfield;
+                this.element = document.createElement('div');
+                this.element.className = 'star';
+
+                this.size = Math.random() * 2 + 0.5;
+                this.element.style.width = `${this.size}px`;
+                this.element.style.height = `${this.size}px`;
+                this.element.style.opacity = Math.random() * 0.8 + 0.2;
+
+                this.resetPosition();
+                this.starfield.starsContainer.appendChild(this.element);
+            }
+
+            resetPosition() {
+                this.x = Math.random() * this.starfield.width;
+                this.y = Math.random() * this.starfield.height;
+                this.vx = (Math.random() - 0.5) * this.starfield.options.baseMovementSpeed;
+                this.vy = (Math.random() - 0.5) * this.starfield.options.baseMovementSpeed;
+            }
+
+            update() {
+                // Base movement
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Screen wrapping
+                if (this.x < 0) this.x = this.starfield.width;
+                if (this.x > this.starfield.width) this.x = 0;
+                if (this.y < 0) this.y = this.starfield.height;
+                if (this.y > this.starfield.height) this.y = 0;
+
+                // Mouse force influence
+                const dx = this.starfield.mouseX - this.x;
+                const dy = this.starfield.mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < this.starfield.options.mouseForceRadius) {
+                    const force = (this.starfield.options.mouseForceRadius - distance) *
+                        this.starfield.options.mouseForceStrength;
+                    const angle = Math.atan2(dy, dx);
+                    this.x -= Math.cos(angle) * force * 0.1;
+                    this.y -= Math.sin(angle) * force * 0.1;
+                }
+
+                this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+            }
+        }
+
+        // Initialize starfield
+        const myStarfield = new Starfield('myStarfield', {
+            starCount: 200,
+            mouseForceRadius: 150,
+            mouseForceStrength: 1,
+            baseMovementSpeed: 0.5,
+            fps: 60
+        });
+    </script>
+</body>
+</html>
