@@ -1,5 +1,5 @@
 ﻿/* Mobile Styles */
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .main-container {
         flex-direction: column-reverse;
         padding: 1rem;
@@ -23,7 +23,7 @@
 }
 
 /* Tablet Styles */
-@@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .main-container {
         padding: 1.5rem;
     }
@@ -35,7 +35,7 @@
 }
 
 /* Landscape Mode */
-@@media (max-height: 600px) and (orientation: landscape) {
+@media (max-height: 600px) and (orientation: landscape) {
     .main-container {
         flex-direction: row;
         padding: 1rem;
@@ -121,7 +121,7 @@ section {
         transform: scale(1.1);
     }
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .profile-container {
         display: flex;
         flex-direction: column;
