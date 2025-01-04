@@ -1,0 +1,141 @@
+﻿@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 25px rgba(70, 200, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 40px rgba(70, 200, 255, 0.7), 0 0 50px rgba(0, 149, 255, 0.4), 0 0 75px rgba(0, 115, 255, 0.2);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 25px rgba(70, 200, 255, 0.4);
+    }
+}
+
+.parallax-wrapper {
+    position: relative;
+    width: min(400px, 90vw);
+    height: min(400px, 90vw);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 50px rgba(255, 166, 0, 0.4);
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+    /* Add a hint text that appears and fades */
+    .parallax-wrapper::after {
+        content: "Click to zoom";
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #ff9900;
+        font-family: 'Roboto', sans-serif;
+        font-size: 1rem;
+        opacity: 0;
+        animation: fadeInOut 3s ease-in-out infinite;
+    }
+
+@@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Optional: Add a subtle rotate animation */
+.parallax-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid rgba(255, 166, 0, 0.3);
+    border-radius: 50%;
+    animation: rotate 4s linear infinite;
+}
+
+@@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Disable animations on hover to prevent conflict with zoom effect */
+.parallax-wrapper:hover::before,
+.parallax-wrapper:hover {
+    animation: none;
+}
+
+.profile-pic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.1s ease-out;
+}
+
+.background-img {
+    border: 4px solid white;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    transform: scale(1.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .background-img:hover {
+        transform: scale(1.6);
+        box-shadow: 0 0 50px rgba(255, 255, 255, 0.5), 0 0 100px rgba(70, 200, 255, 0.3);
+        border-color: #46c8ff;
+    }
+
+.flying-circle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid #528cdf;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+}
+
+    .flying-circle:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(82, 140, 223, 0.5);
+    }
+
+    .flying-circle img {
+        transition: transform 0.3s ease;
+    }
+
+    .flying-circle:hover img {
+        transform: scale(1.1);
+    }
+
+.foreground-img {
+    pointer-events: none;
+    margin-top: 10px;
+}
+
+@@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}

@@ -1,0 +1,58 @@
+﻿.main-container {
+    position: relative;
+    min-height: 100vh;
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.text-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+.welcome-message {
+    color: white;
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.5rem;
+    font-family: 'gendy', sans-serif;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.name-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: bold;
+    background: linear-gradient(165deg, #4d71ad, #528cdf, #c1a894, #bf893e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.typing-container {
+    color: white;
+    font-family: 'gendy', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.typing-text {
+    display: inline;
+    border-right: 3px solid white;
+    padding-right: 5px;
+    animation: blink 0.7s infinite;
+}
+
+.profile-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}

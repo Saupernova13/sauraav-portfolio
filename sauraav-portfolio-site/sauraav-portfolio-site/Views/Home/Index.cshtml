@@ -7,228 +7,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        .floating-word {
-            position: absolute;
-            color: white;
-            font-family: 'Roboto', sans-serif;
-            pointer-events: none;
-            white-space: nowrap;
-            opacity: 0.7;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            will-change: transform;
-            transition: transform 0.2s ease-out;
-        }
-
-        .starfield-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            overflow: hidden;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            will-change: transform;
-            transition: transform 0.2s ease-out;
-            pointer-events: none;
-        }
-
-        .main-container {
-            position: relative;
-            min-height: 100vh;
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .text-content {
-            flex: 1;
-            max-width: 600px;
-        }
-
-        .welcome-message {
-            color: white;
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: 1.5rem;
-            font-family: 'gendy', sans-serif;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .name-text {
-            font-family: 'Roboto', sans-serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: bold;
-            background: linear-gradient(165deg, #4d71ad, #528cdf, #c1a894, #bf893e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
-        .typing-container {
-            color: white;
-            font-family: 'gendy', sans-serif;
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-        }
-
-        .typing-text {
-            display: inline;
-            border-right: 3px solid white;
-            padding-right: 5px;
-            animation: blink 0.7s infinite;
-        }
-
-        .profile-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
-        }
-
-        .parallax-wrapper {
-            position: relative;
-            width: min(400px, 90vw);
-            height: min(400px, 90vw);
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        .profile-pic {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.1s ease-out;
-        }
-
-        .background-img {
-            border: 4px solid white;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-            transform: scale(1.2);
-        }
-
-            .background-img:hover {
-                transform: scale(1.6);
-                box-shadow: 0 0 50px rgba(255, 255, 255, 0.5), 0 0 100px rgba(70, 200, 255, 0.3);
-                border-color: #46c8ff;
-            }
-
-        .foreground-img {
-            pointer-events: none;
-            margin-top: 10px;
-        }
-
-        @@keyframes blink {
-            50% {
-                border-color: transparent;
-            }
-        }
-
-        /* Mobile Styles */
-        @@media (max-width: 768px) {
-            .main-container {
-                flex-direction: column-reverse;
-                padding: 1rem;
-                text-align: center;
-                min-height: 100svh;
-               margin-top: 0px !important;
-            }
-
-            .text-content {
-                padding: 1rem;
-            }
-
-            .parallax-wrapper {
-                width: min(300px, 80vw);
-                height: min(300px, 80vw);
-            }
-        }
-
-        /* Tablet Styles */
-        @@media (min-width: 769px) and (max-width: 1024px) {
-            .main-container {
-                padding: 1.5rem;
-            }
-
-            .parallax-wrapper {
-                width: 350px;
-                height: 350px;
-            }
-        }
-
-        /* Landscape Mode */
-        @@media (max-height: 600px) and (orientation: landscape) {
-            .main-container {
-                flex-direction: row;
-                padding: 1rem;
-            }
-
-            .parallax-wrapper {
-                width: min(250px, 40vh);
-                height: min(250px, 40vh);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="~/css/stars_bg.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dynamic_typed.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" /> 
+    <link rel="stylesheet" href="~/css/movile_optimisations.css" asp-append-version="true" />
 </head>
 <body>
     <div class="starfield-container" id="myStarfield"></div>
-    <div class="main-container" style="margin-top: -60px;">
-        <div class="text-content">
-            <h1 class="welcome-message">Greetings cyber citizen!</h1>
-            <div class="name-text">My name is Sauraav Jayrajh.</div>
-            <div class="typing-container">
-                I'm <span class="typing-text"></span>
+
+    <!-- Section 1 -->
+    <section id="section1">
+        <div class="main-container" style="margin-top: -60px;">
+            <div class="text-content">
+                <h1 class="welcome-message">Greetings cyber citizen!</h1>
+                <div class="name-text">My name is Sauraav Jayrajh.</div>
+                <div class="typing-container">
+                    I'm <span class="typing-text"></span>
+                </div>
+            </div>
+            <div class="profile-container">
+                <div class="parallax-wrapper">
+                    <img src="~/images/PFP_No_Me.png" alt="Background" class="profile-pic background-img">
+                    <img src="~/images/PFP_With_Me.png" alt="Profile Picture" class="profile-pic foreground-img">
+                </div>
+                <!-- Add this new div -->
+                <div class="social-icons-mobile">
+                    <a href="https://github.com/Saupernova13" class="social-icon-mobile" target="_blank">
+                        <img src="/images/github.png" alt="GitHub">
+                    </a>
+                    <a href="https://www.linkedin.com/in/sauraavjayrajh/" class="social-icon-mobile" target="_blank">
+                        <img src="/images/linkedin.png" alt="LinkedIn">
+                    </a>
+                    <a href="mailto:sauraavjayrajh@gmail.com" class="social-icon-mobile" target="_blank">
+                        <img src="/images/email.png" alt="Email">
+                    </a>
+                    <a href="https://wa.me/0719244175" class="social-icon-mobile" target="_blank">
+                        <img src="/images/phone.png" alt="Phone">
+                    </a>
+                </div>
+
             </div>
         </div>
-        <div class="profile-container">
-            <div class="parallax-wrapper">
-                <img src="~/images/PFP_No_Me.png" alt="Background" class="profile-pic background-img">
-                <img src="~/images/PFP_With_Me.png" alt="Profile Picture" class="profile-pic foreground-img">
-            </div>
-        </div>
-    </div>
-    <div class="min-vh-100"></div>
+        <button class="scroll-button" onclick="scrollToSection('section2')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="section2">
+        <div class="min-vh-100"></div>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="section3">
+        <div class="min-vh-100"></div>
+    </section>
 
     <script src="~/js/stars_bg.js" asp-append-version="true"></script>
     <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
     <script src="~/js/parallax.js" asp-append-version="true"></script>
+    <script src="~/js/scroll_logic.js" asp-append-version="true"></script>
+    <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
+
 </body>
 </html>
