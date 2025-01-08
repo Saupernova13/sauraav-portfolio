@@ -66,3 +66,19 @@
     font-family: 'wanafi';
     src: url('../fonts/wanafi.ttf') format('truetype');
 }
+@keyframes globalPulse {
+    0% {
+        box-shadow: 0 0 5px #528cdf, 0 0 10px #528cdf;
+        border-color: #528cdf;
+    }
+
+    50% {
+        box-shadow: 0 0 15px #528cdf, 0 0 25px #528cdf, 0 0 35px #528cdf;
+        border-color: #528cdf;
+    }
+
+    100% {
+        box-shadow: 0 0 5px #528cdf, 0 0 10px #528cdf;
+        border-color: #528cdf;
+    }
+}

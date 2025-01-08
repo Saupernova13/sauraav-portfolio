@@ -43,26 +43,20 @@
                 transition: opacity 0.3s ease-in-out;
             }
 
-            .neon-line::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                    background: #bf893e;
-                    box-shadow: 0 0 5px #bf893e, 0 0 10px #bf893e, 0 0 20px #bf893e, 0 0 40px #bf893e;
-                animation: neon-pulse 1.5s ease-in-out infinite;
-            }
+                .neon-line::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background: #4B7ABE;
+                    box-shadow: 0 0 10px #528cdf, 0 0 15px #528cdf, 0 0 25px #528cdf, 0 0 50px #528cdf;
+                    animation: globalPulse 2s ease-in-out infinite;
+                }
 
             .hide-header .neon-line {
                 opacity: 1;
-            }
-
-            @@keyframes neon-pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.5; }
-                100% { opacity: 1; }
             }
 
             .neon-line, .hover-area {
@@ -123,6 +117,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
                         </li>
                     </ul>
                 </div>

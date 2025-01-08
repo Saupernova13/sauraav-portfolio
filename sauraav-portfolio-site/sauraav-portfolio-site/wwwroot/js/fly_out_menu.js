@@ -1,12 +1,83 @@
-﻿
-const links = [
+﻿const links = [
     { img: "/images/github.png", url: "https://github.com/Saupernova13" },
     { img: "/images/linkedin.png", url: "https://www.linkedin.com/in/sauraavjayrajh/" },
     { img: "/images/email.png", url: "mailto:sauraavjayrajh@gmail.com" },
-    { img: "/images/phone.png", url: "https://wa.me/0719244175" }
+    { img: "/images/stardust.png", url: "https://stardustsoftware.carrd.co/" }
 ];
 
 let activeCircles = [];
+let lastScrollPosition = window.pageYOffset;
+
+// Track scroll position changes
+let lastKnownScrollPosition = window.scrollY;
+
+// Close menu on any scroll event
+document.addEventListener('scroll', function (e) {
+    if (activeCircles.length > 0 && window.scrollY !== lastKnownScrollPosition) {
+        closeCircles();
+    }
+    lastKnownScrollPosition = window.scrollY;
+}, { passive: true });
+
+// Close menu on any mouse click (except the menu itself and profile picture)
+document.addEventListener('mousedown', function (e) {
+    if (!e.target.closest('.flying-circle') &&
+        !e.target.closest('.background-img') &&
+        activeCircles.length > 0) {
+        closeCircles();
+    }
+});
+
+// Close menu when user clicks outside the window
+window.addEventListener('beforeunload', function () {
+    if (activeCircles.length > 0) {
+        closeCircles();
+    }
+});
+
+// Close menu on mousewheel
+document.addEventListener('wheel', function (e) {
+    if (activeCircles.length > 0) {
+        closeCircles();
+    }
+}, { passive: true });
+
+// Close menu on touchmove (for mobile)
+document.addEventListener('touchmove', function (e) {
+    if (activeCircles.length > 0) {
+        closeCircles();
+    }
+}, { passive: true });
+
+// Close menu on scrollbar interaction
+document.addEventListener('mousedown', function (e) {
+    // Check if click is on the scrollbar
+    if (e.clientX >= document.documentElement.offsetWidth ||
+        e.clientY >= document.documentElement.offsetHeight) {
+        if (activeCircles.length > 0) {
+            closeCircles();
+        }
+    }
+}, { passive: true });
+
+// Close menu on keyboard scroll (up/down arrows, page up/down, spacebar)
+document.addEventListener('keydown', function (e) {
+    const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Space', ' ', 'Home', 'End'];
+    if (scrollKeys.includes(e.key) && activeCircles.length > 0) {
+        closeCircles();
+    }
+}, { passive: true });
+
+// Additional check for scrollbar clicks
+document.addEventListener('click', function (e) {
+    // Check if click is on the scrollbar
+    if (e.clientX >= document.documentElement.offsetWidth ||
+        e.clientY >= document.documentElement.offsetHeight) {
+        if (activeCircles.length > 0) {
+            closeCircles();
+        }
+    }
+}, { passive: true });
 
 document.querySelector('.background-img').addEventListener('click', function (e) {
     const rect = this.getBoundingClientRect();
@@ -22,16 +93,6 @@ document.querySelector('.background-img').addEventListener('click', function (e)
     }
 
     const circleSize = Math.max(50, 100 - (links.length * 8));
-
-    if (isMobile) {
-        // Create spacing for mobile circles
-        const spacer = document.createElement('div');
-        spacer.className = 'mobile-spacer';
-        spacer.style.height = `${radius * 1.5}px`; // Adjust based on arc height
-        spacer.style.transition = 'all 0.3s ease';
-        document.querySelector('.profile-container').appendChild(spacer);
-        activeCircles.push(spacer);
-    }
 
     links.forEach((link, index) => {
         const circle = document.createElement('a');
@@ -52,35 +113,33 @@ document.querySelector('.background-img').addEventListener('click', function (e)
         circle.appendChild(img);
 
         if (isMobile) {
-            // Initial position (underneath the profile picture)
-            const initialX = centerX - (circleSize / 2);
-            const initialY = centerY + radius - (circleSize / 2);
+            //// Initial position (underneath the profile picture)
+            //const initialX = centerX - (circleSize / 2);
+            //const initialY = centerY + radius - (circleSize / 2);
 
-            // Calculate arc positions
-            const totalAngleSpread = 90; // Degrees for the bottom arc
-            const startAngle = -180 - (totalAngleSpread / 2); // Center at bottom
-            const angleStep = totalAngleSpread / (links.length - 1 || 1);
-            const angle = (startAngle + (index * angleStep)) * (Math.PI / 180);
-            const finalRadius = radius * 1.2; // Adjust this multiplier to control how far the icons spread
+            //// Calculate arc positions
+            //const totalAngleSpread = 90; // Degrees for the bottom arc
+            //const startAngle = -180 - (totalAngleSpread / 2); // Center at bottom
+            //const angleStep = totalAngleSpread / (links.length - 1 || 1);
+            //const angle = (startAngle + (index * angleStep)) * (Math.PI / 180);
+            ////Control spread length
+            //const finalRadius = radius * 1.2;
+            //const finalX = centerX + Math.cos(angle) * finalRadius - (circleSize / 2);
+            //const finalY = centerY + radius + Math.abs(Math.sin(angle) * finalRadius) - (circleSize / 2);
 
-            const finalX = centerX + Math.cos(angle) * finalRadius - (circleSize / 2);
-            const finalY = centerY + radius + Math.abs(Math.sin(angle) * finalRadius) - (circleSize / 2);
-
-            circle.style.left = `${initialX}px`;
-            circle.style.top = `${initialY}px`;
-            circle.style.zIndex = '0'; // Start behind profile picture
-            circle.initialX = initialX;
-            circle.initialY = initialY;
-            circle.finalX = finalX;
-            circle.finalY = finalY;
+            //circle.style.left = `${initialX}px`;
+            //circle.style.top = `${initialY}px`;
+            //circle.style.zIndex = '0';
+            //circle.initialX = initialX;
+            //circle.initialY = initialY;
+            //circle.finalX = finalX;
+            //circle.finalY = finalY;
         } else {
-            // Desktop positioning (original code)
             const totalAngleSpread = Math.min(120, links.length * 30);
             const startAngle = -totalAngleSpread / 2;
             const angleStep = totalAngleSpread / (links.length - 1 || 1);
             const angle = (startAngle + (index * angleStep)) * (Math.PI / 180);
             const finalRadius = radius + 100;
-
             const initialX = centerX + radius - (circleSize / 2);
             const initialY = centerY - (circleSize / 2);
             const finalX = centerX + Math.cos(angle) * finalRadius - (circleSize / 2);
@@ -103,7 +162,7 @@ document.querySelector('.background-img').addEventListener('click', function (e)
             circle.style.left = `${circle.finalX}px`;
             circle.style.top = `${circle.finalY}px`;
             circle.style.opacity = '1';
-            circle.style.zIndex = '1000'; // Bring to front during animation
+            circle.style.zIndex = '1000';
         });
     });
 });
@@ -126,11 +185,10 @@ function closeCircles() {
     }, 300);
 }
 
-// Clean up circles when clicking elsewhere
 document.addEventListener('click', function (e) {
     if (!e.target.closest('.background-img') &&
         !e.target.closest('.flying-circle') &&
         activeCircles.length > 0) {
         closeCircles();
     }
-});
+}); 

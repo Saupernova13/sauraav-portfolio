@@ -1,28 +1,13 @@
-﻿@keyframes pulseGlow {
-    0% {
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 25px rgba(70, 200, 255, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 40px rgba(70, 200, 255, 0.7), 0 0 50px rgba(0, 149, 255, 0.4), 0 0 75px rgba(0, 115, 255, 0.2);
-    }
-
-    100% {
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 25px rgba(70, 200, 255, 0.4);
-    }
-}
-
-.parallax-wrapper {
+﻿.parallax-wrapper {
     position: relative;
     width: min(400px, 90vw);
     height: min(400px, 90vw);
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 50px rgba(255, 166, 0, 0.4);
-    animation: pulseGlow 2s ease-in-out infinite;
+    animation: globalPulse 2s ease-in-out infinite;
 }
 
-    /* Add a hint text that appears and fades */
     .parallax-wrapper::after {
         content: "Click to zoom";
         position: absolute;
@@ -36,7 +21,8 @@
         animation: fadeInOut 3s ease-in-out infinite;
     }
 
-@@keyframes fadeInOut {
+
+@keyframes fadeInOut {
     0%, 100% {
         opacity: 0;
     }
@@ -58,8 +44,7 @@
     border-radius: 50%;
     animation: rotate 4s linear infinite;
 }
-
-@@keyframes rotate {
+@keyframes rotate {
     from {
         transform: rotate(0deg);
     }
@@ -68,8 +53,6 @@
         transform: rotate(360deg);
     }
 }
-
-/* Disable animations on hover to prevent conflict with zoom effect */
 .parallax-wrapper:hover::before,
 .parallax-wrapper:hover {
     animation: none;
@@ -134,7 +117,7 @@
     margin-top: 10px;
 }
 
-@@keyframes blink {
+@keyframes blink {
     50% {
         border-color: transparent;
     }

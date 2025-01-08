@@ -1,0 +1,1084 @@
+﻿@{
+    ViewData["Title"] = "Admin Page";
+}
+
+<div class="container mt-4">
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">Summary</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">Education</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">Experience</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">Projects</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications" type="button" role="tab">Qualifications</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab">Skills</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+        <!-- Summary Section -->
+        <div class="tab-pane fade show active" id="summary" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Summary</h5>
+                    <form id="summaryForm">
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" id="summaryText" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Summary</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Updated Education Section in the main HTML -->
+        <div class="tab-pane fade" id="education" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Add/Edit Education</h5>
+                    <form id="educationForm">
+                        <input type="hidden" id="eduIsEdit" value="false">
+                        <input type="hidden" id="eduOriginalSchool" value="">
+                        <div class="form-group">
+                            <label>School Name</label>
+                            <input type="text" class="form-control" id="schoolName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" id="educationDescription" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" class="form-control" id="location" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="hasStartDate">
+                                    <label class="custom-control-label" for="hasStartDate">Has Start Date</label>
+                                </div>
+                                <input type="date" class="form-control" id="eduStartDate" disabled>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="hasEndDate">
+                                    <label class="custom-control-label" for="hasEndDate">Has End Date</label>
+                                </div>
+                                <input type="date" class="form-control" id="eduEndDate" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input type="file" class="form-control-file" id="eduImage" accept="image/*">
+                            <img id="eduImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Education</button>
+                        <button type="button" class="btn btn-secondary" id="eduClearForm">Clear Form</button>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Existing Education Entries</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>School</th>
+                                        <th>Location</th>
+                                        <th>Duration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="educationList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Experience Section -->
+        <div class="tab-pane fade" id="experience" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Add/Edit Experience</h5>
+                    <form id="experienceForm">
+                        <input type="hidden" id="expIsEdit" value="false">
+                        <input type="hidden" id="expOriginalTitle" value="">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control" id="expTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" class="form-control" id="expLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Accomplishments</label>
+                            <div id="accomplishmentsList">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control accomplishment" required>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeAccomplishment(this)">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="addAccomplishment()">
+                                Add Another Accomplishment
+                            </button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="expHasStartDate">
+                                    <label class="custom-control-label" for="expHasStartDate">Has Start Date</label>
+                                </div>
+                                <input type="date" class="form-control" id="expStartDate" disabled>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="expHasEndDate">
+                                    <label class="custom-control-label" for="expHasEndDate">Has End Date</label>
+                                </div>
+                                <input type="date" class="form-control" id="expEndDate" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input type="file" class="form-control-file" id="expImage" accept="image/*">
+                            <img id="expImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Experience</button>
+                        <button type="button" class="btn btn-secondary" id="expClearForm">Clear Form</button>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Existing Experience Entries</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Location</th>
+                                        <th>Duration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="experienceList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="tab-pane fade" id="projects" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Add/Edit Project</h5>
+                    <form id="projectForm">
+                        <input type="hidden" id="projIsEdit" value="false">
+                        <input type="hidden" id="projOriginalName" value="">
+                        <div class="form-group">
+                            <label>Project Name</label>
+                            <input type="text" class="form-control" id="projectName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" id="projectDescription" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Project Link</label>
+                            <input type="url" class="form-control" id="projectLink" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Demo Video</label>
+                            <input type="file" class="form-control-file" id="projectVideo" accept="video/*">
+                            <video id="projectVideoPreview" class="mt-2" style="max-width: 200px; display: none;" controls></video>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                        <button type="button" class="btn btn-secondary" id="projClearForm">Clear Form</button>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Existing Projects</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Project Name</th>
+                                        <th>Link</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectsList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qualifications Section -->
+        <div class="tab-pane fade" id="qualifications" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Add/Edit Qualification</h5>
+                    <form id="qualificationForm">
+                        <input type="hidden" id="qualIsEdit" value="false">
+                        <input type="hidden" id="qualOriginalName" value="">
+                        <div class="form-group">
+                            <label>Qualification Name</label>
+                            <input type="text" class="form-control" id="qualificationName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input type="file" class="form-control-file" id="qualificationImage" accept="image/*">
+                            <img id="qualImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Qualification</button>
+                        <button type="button" class="btn btn-secondary" id="qualClearForm">Clear Form</button>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Existing Qualifications</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Qualification</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="qualificationsList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="tab-pane fade" id="skills" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Add/Edit Skill</h5>
+                    <form id="skillForm">
+                        <input type="hidden" id="skillIsEdit" value="false">
+                        <input type="hidden" id="skillOriginalName" value="">
+                        <div class="form-group">
+                            <label>Skill Name</label>
+                            <input type="text" class="form-control" id="skillName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Skill Level (1-10): <span id="skillLevelValue">5</span></label>
+                            <input type="range" class="form-control-range" id="skillLevel" min="1" max="10" value="5" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Skill</button>
+                        <button type="button" class="btn btn-secondary" id="skillClearForm">Clear Form</button>
+                    </form>
+
+                    <div class="mt-4">
+                        <h5>Existing Skills</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th>Level</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="skillsList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Utility Functions
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    resolve(null);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            return new Date(dateString).toISOString().split('T')[0];
+        }
+
+        function showAlert(title, text, icon) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon
+            });
+        }
+
+        // Form Submissions
+        // Summary Form
+        document.getElementById('summaryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/Admin/SaveSummary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        summary: document.getElementById('summaryText').value
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Summary saved successfully', 'success');
+                    loadAllData();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                showAlert('Error', 'Failed to save summary', 'error');
+            }
+        });
+
+        // Education Form Handlers
+        document.getElementById('hasStartDate').addEventListener('change', function () {
+            const startDateInput = document.getElementById('eduStartDate');
+            startDateInput.disabled = !this.checked;
+            if (!this.checked) {
+                startDateInput.value = '';
+            }
+        });
+
+        document.getElementById('hasEndDate').addEventListener('change', function () {
+            const endDateInput = document.getElementById('eduEndDate');
+            endDateInput.disabled = !this.checked;
+            if (!this.checked) {
+                endDateInput.value = '';
+            }
+        });
+
+        document.getElementById('educationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const imageBase64 = await convertToBase64(document.getElementById('eduImage').files[0]);
+                const hasStartDate = document.getElementById('hasStartDate').checked;
+                const hasEndDate = document.getElementById('hasEndDate').checked;
+
+                const educationData = {
+                    schoolName: document.getElementById('schoolName').value,
+                    description: document.getElementById('educationDescription').value || "",
+                    location: document.getElementById('location').value || "",
+                    startDate: hasStartDate ? document.getElementById('eduStartDate').value : null,
+                    endDate: hasEndDate ? document.getElementById('eduEndDate').value : null,
+                    imageBase64: imageBase64 || document.getElementById('eduImagePreview').src || ""
+                };
+
+                const response = await fetch('/Admin/AddEducation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(educationData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Education saved successfully', 'success');
+                    loadAllData();
+                    clearEducationForm();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error', `Failed to save education: ${error.message}`, 'error');
+            }
+        });
+
+        // Experience Form Handlers
+        document.getElementById('expHasStartDate').addEventListener('change', function () {
+            const startDateInput = document.getElementById('expStartDate');
+            startDateInput.disabled = !this.checked;
+            if (!this.checked) {
+                startDateInput.value = '';
+            }
+        });
+
+        document.getElementById('expHasEndDate').addEventListener('change', function () {
+            const endDateInput = document.getElementById('expEndDate');
+            endDateInput.disabled = !this.checked;
+            if (!this.checked) {
+                endDateInput.value = '';
+            }
+        });
+        // Experience Form Submission
+        document.getElementById('experienceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const imageBase64 = await convertToBase64(document.getElementById('expImage').files[0]);
+                const hasStartDate = document.getElementById('expHasStartDate').checked;
+                const hasEndDate = document.getElementById('expHasEndDate').checked;
+
+                // Get all accomplishments
+                const accomplishments = Array.from(document.querySelectorAll('.accomplishment'))
+                    .map(input => input.value)
+                    .filter(value => value.trim() !== '');
+
+                const experienceData = {
+                    title: document.getElementById('expTitle').value,
+                    location: document.getElementById('expLocation').value,
+                    accomplishments: accomplishments,
+                    startDate: hasStartDate ? document.getElementById('expStartDate').value : null,
+                    endDate: hasEndDate ? document.getElementById('expEndDate').value : null,
+                    imageBase64: imageBase64 || document.getElementById('expImagePreview').src || ""
+                };
+
+                const response = await fetch('/Admin/AddExperience', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(experienceData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Experience saved successfully', 'success');
+                    loadAllData();
+                    clearExperienceForm();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error', `Failed to save experience: ${error.message}`, 'error');
+            }
+        });
+
+        // Project Form Submission
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData();
+                const videoFile = document.getElementById('projectVideo').files[0];
+
+                if (videoFile) {
+                    formData.append('video', videoFile);
+                }
+
+                const projectData = {
+                    projectName: document.getElementById('projectName').value,
+                    description: document.getElementById('projectDescription').value,
+                    projectLink: document.getElementById('projectLink').value,
+                    demoVideoPath: document.getElementById('projIsEdit').value === 'true' ?
+                        document.getElementById('projectVideoPreview').src : ''
+                };
+
+                formData.append('projectData', JSON.stringify(projectData));
+
+                const response = await fetch('/Admin/AddProject', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Project saved successfully', 'success');
+                    loadAllData();
+                    clearProjectForm();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error', `Failed to save project: ${error.message}`, 'error');
+            }
+        });
+
+        // Qualifications Form Submission
+        document.getElementById('qualificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const imageBase64 = await convertToBase64(document.getElementById('qualificationImage').files[0]);
+
+                const qualificationData = {
+                    qualificationName: document.getElementById('qualificationName').value,
+                    imageBase64: imageBase64 || document.getElementById('qualImagePreview').src || ""
+                };
+
+                const response = await fetch('/Admin/AddQualification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(qualificationData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Qualification saved successfully', 'success');
+                    loadAllData();
+                    clearQualificationForm();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error', `Failed to save qualification: ${error.message}`, 'error');
+            }
+        });
+
+        // Skills Form Submission
+        document.getElementById('skillForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const skillData = {
+                    skillName: document.getElementById('skillName').value,
+                    skillLevel: parseInt(document.getElementById('skillLevel').value)
+                };
+
+                const response = await fetch('/Admin/AddSkill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(skillData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('Success', 'Skill saved successfully', 'success');
+                    loadAllData();
+                    clearSkillForm();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error', `Failed to save skill: ${error.message}`, 'error');
+            }
+        });
+        // Load All Data Function
+        async function loadAllData() {
+            try {
+                const response = await fetch('/Admin/GetAllData');
+                const data = await response.json();
+
+                // Load Summary
+                if (data.summary) {
+                    document.getElementById('summaryText').value = data.summary.summary || '';
+                }
+
+                // Load Education
+                const educationList = document.getElementById('educationList');
+                educationList.innerHTML = '';
+                if (data.education) {
+                    Object.entries(data.education).forEach(([key, edu]) => {
+                        const duration = formatEducationDuration(edu.startDate, edu.endDate);
+                        educationList.innerHTML += `
+                                                <tr>
+                                                    <td>${edu.schoolName}</td>
+                                                    <td>${edu.location || ''}</td>
+                                                    <td>${duration}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" onclick='editEducation(${JSON.stringify(edu)})'>Edit</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteEducation('${edu.schoolName}')">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                    });
+                }
+
+                // Load Experience
+                const experienceList = document.getElementById('experienceList');
+                experienceList.innerHTML = '';
+                if (data.experience) {
+                    Object.entries(data.experience).forEach(([key, exp]) => {
+                        const duration = formatEducationDuration(exp.startDate, exp.endDate);
+                        experienceList.innerHTML += `
+                                                <tr>
+                                                    <td>${exp.title}</td>
+                                                    <td>${exp.location || ''}</td>
+                                                    <td>${duration}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" onclick='editExperience(${JSON.stringify(exp)})'>Edit</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteExperience('${exp.title}')">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                    });
+                }
+
+                // Load Projects
+                const projectsList = document.getElementById('projectsList');
+                projectsList.innerHTML = '';
+                if (data.projects) {
+                    Object.entries(data.projects).forEach(([key, proj]) => {
+                        projectsList.innerHTML += `
+                                                <tr>
+                                                    <td>${proj.projectName}</td>
+                                                    <td><a href="${proj.projectLink}" target="_blank">View Project</a></td>
+                                                    <td>${proj.demoVideoPath ?
+                                `<a href="${proj.demoVideoPath}" target="_blank">View Demo</a>` :
+                                'No demo available'}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" onclick='editProject(${JSON.stringify(proj)})'>Edit</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteProject('${proj.projectName}')">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                    });
+                }
+
+                // Load Qualifications
+                const qualificationsList = document.getElementById('qualificationsList');
+                qualificationsList.innerHTML = '';
+                if (data.qualifications) {
+                    Object.entries(data.qualifications).forEach(([key, qual]) => {
+                        qualificationsList.innerHTML += `
+                                                <tr>
+                                                    <td>${qual.qualificationName}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" onclick='editQualification(${JSON.stringify(qual)})'>Edit</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteQualification('${qual.qualificationName}')">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                    });
+                }
+
+                // Load Skills
+                const skillsList = document.getElementById('skillsList');
+                skillsList.innerHTML = '';
+                if (data.skills) {
+                    Object.entries(data.skills).forEach(([key, skill]) => {
+                        skillsList.innerHTML += `
+                                                <tr>
+                                                    <td>${skill.skillName}</td>
+                                                    <td>${skill.skillLevel}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" onclick='editSkill(${JSON.stringify(skill)})'>Edit</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteSkill('${skill.skillName}')">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showAlert('Error', 'Failed to load data', 'error');
+            }
+        }
+        // Edit Functions
+        function editEducation(education) {
+            document.getElementById('eduIsEdit').value = 'true';
+            document.getElementById('eduOriginalSchool').value = education.schoolName;
+            document.getElementById('schoolName').value = education.schoolName;
+            document.getElementById('educationDescription').value = education.description || '';
+            document.getElementById('location').value = education.location || '';
+
+            // Handle start date
+            if (education.startDate) {
+                document.getElementById('hasStartDate').checked = true;
+                document.getElementById('eduStartDate').disabled = false;
+                document.getElementById('eduStartDate').value = formatDate(education.startDate);
+            } else {
+                document.getElementById('hasStartDate').checked = false;
+                document.getElementById('eduStartDate').disabled = true;
+                document.getElementById('eduStartDate').value = '';
+            }
+
+            // Handle end date
+            if (education.endDate) {
+                document.getElementById('hasEndDate').checked = true;
+                document.getElementById('eduEndDate').disabled = false;
+                document.getElementById('eduEndDate').value = formatDate(education.endDate);
+            } else {
+                document.getElementById('hasEndDate').checked = false;
+                document.getElementById('eduEndDate').disabled = true;
+                document.getElementById('eduEndDate').value = '';
+            }
+
+            if (education.imageBase64) {
+                document.getElementById('eduImagePreview').src = education.imageBase64;
+                document.getElementById('eduImagePreview').style.display = 'block';
+            }
+        }
+
+        function editExperience(experience) {
+            document.getElementById('expIsEdit').value = 'true';
+            document.getElementById('expOriginalTitle').value = experience.title;
+            document.getElementById('expTitle').value = experience.title;
+            document.getElementById('expLocation').value = experience.location || '';
+
+            // Clear existing accomplishments
+            document.getElementById('accomplishmentsList').innerHTML = '';
+
+            // Add each accomplishment
+            if (experience.accomplishments && experience.accomplishments.length > 0) {
+                experience.accomplishments.forEach(accomplishment => {
+                    addAccomplishment(accomplishment);
+                });
+            } else {
+                addAccomplishment(); // Add one empty field
+            }
+
+            // Handle start date
+            if (experience.startDate) {
+                document.getElementById('expHasStartDate').checked = true;
+                document.getElementById('expStartDate').disabled = false;
+                document.getElementById('expStartDate').value = formatDate(experience.startDate);
+            } else {
+                document.getElementById('expHasStartDate').checked = false;
+                document.getElementById('expStartDate').disabled = true;
+                document.getElementById('expStartDate').value = '';
+            }
+
+            // Handle end date
+            if (experience.endDate) {
+                document.getElementById('expHasEndDate').checked = true;
+                document.getElementById('expEndDate').disabled = false;
+                document.getElementById('expEndDate').value = formatDate(experience.endDate);
+            } else {
+                document.getElementById('expHasEndDate').checked = false;
+                document.getElementById('expEndDate').disabled = true;
+                document.getElementById('expEndDate').value = '';
+            }
+
+            if (experience.imageBase64) {
+                document.getElementById('expImagePreview').src = experience.imageBase64;
+                document.getElementById('expImagePreview').style.display = 'block';
+            }
+        }
+
+        function editProject(project) {
+            document.getElementById('projIsEdit').value = 'true';
+            document.getElementById('projOriginalName').value = project.projectName;
+            document.getElementById('projectName').value = project.projectName;
+            document.getElementById('projectDescription').value = project.description;
+            document.getElementById('projectLink').value = project.projectLink;
+
+            if (project.demoVideoPath) {
+                const preview = document.getElementById('projectVideoPreview');
+                preview.src = project.demoVideoPath;
+                preview.style.display = 'block';
+            }
+        }
+
+        function editQualification(qualification) {
+            document.getElementById('qualIsEdit').value = 'true';
+            document.getElementById('qualOriginalName').value = qualification.qualificationName;
+            document.getElementById('qualificationName').value = qualification.qualificationName;
+
+            if (qualification.imageBase64) {
+                document.getElementById('qualImagePreview').src = qualification.imageBase64;
+                document.getElementById('qualImagePreview').style.display = 'block';
+            }
+        }
+
+        function editSkill(skill) {
+            document.getElementById('skillIsEdit').value = 'true';
+            document.getElementById('skillOriginalName').value = skill.skillName;
+            document.getElementById('skillName').value = skill.skillName;
+            document.getElementById('skillLevel').value = skill.skillLevel;
+            document.getElementById('skillLevelValue').textContent = skill.skillLevel;
+        }
+
+        // Delete Functions
+        async function deleteEducation(schoolName) {
+            if (await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => result.isConfirmed)) {
+                try {
+                    const response = await fetch(`/Admin/DeleteEducation?schoolName=${encodeURIComponent(schoolName)}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert('Deleted!', 'Education entry has been deleted.', 'success');
+                        loadAllData();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showAlert('Error', 'Failed to delete education entry', 'error');
+                }
+            }
+        }
+        async function deleteExperience(title) {
+            if (await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => result.isConfirmed)) {
+                try {
+                    const response = await fetch(`/Admin/DeleteExperience?title=${encodeURIComponent(title)}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert('Deleted!', 'Experience entry has been deleted.', 'success');
+                        loadAllData();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showAlert('Error', 'Failed to delete experience entry', 'error');
+                }
+            }
+        }
+
+        async function deleteProject(projectName) {
+            if (await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => result.isConfirmed)) {
+                try {
+                    const response = await fetch(`/Admin/DeleteProject?projectName=${encodeURIComponent(projectName)}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert('Deleted!', 'Project has been deleted.', 'success');
+                        loadAllData();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showAlert('Error', 'Failed to delete project', 'error');
+                }
+            }
+        }
+
+        async function deleteQualification(qualificationName) {
+            if (await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => result.isConfirmed)) {
+                try {
+                    const response = await fetch(`/Admin/DeleteQualification?qualificationName=${encodeURIComponent(qualificationName)}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert('Deleted!', 'Qualification has been deleted.', 'success');
+                        loadAllData();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showAlert('Error', 'Failed to delete qualification', 'error');
+                }
+            }
+        }
+
+        async function deleteSkill(skillName) {
+            if (await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => result.isConfirmed)) {
+                try {
+                    const response = await fetch(`/Admin/DeleteSkill?skillName=${encodeURIComponent(skillName)}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert('Deleted!', 'Skill has been deleted.', 'success');
+                        loadAllData();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showAlert('Error', 'Failed to delete skill', 'error');
+                }
+            }
+        }
+
+        // Clear Form Functions
+        function clearEducationForm() {
+            document.getElementById('educationForm').reset();
+            document.getElementById('eduIsEdit').value = 'false';
+            document.getElementById('eduOriginalSchool').value = '';
+            document.getElementById('eduImagePreview').style.display = 'none';
+            document.getElementById('eduStartDate').disabled = true;
+            document.getElementById('eduEndDate').disabled = true;
+        }
+
+        function clearExperienceForm() {
+            document.getElementById('experienceForm').reset();
+            document.getElementById('expIsEdit').value = 'false';
+            document.getElementById('expOriginalTitle').value = '';
+            document.getElementById('expImagePreview').style.display = 'none';
+            document.getElementById('expStartDate').disabled = true;
+            document.getElementById('expEndDate').disabled = true;
+            document.getElementById('accomplishmentsList').innerHTML = '';
+            addAccomplishment(); // Add one empty accomplishment field
+        }
+
+        function clearProjectForm() {
+            document.getElementById('projectForm').reset();
+            document.getElementById('projIsEdit').value = 'false';
+            document.getElementById('projOriginalName').value = '';
+            document.getElementById('projectVideoPreview').style.display = 'none';
+        }
+
+        function clearQualificationForm() {
+            document.getElementById('qualificationForm').reset();
+            document.getElementById('qualIsEdit').value = 'false';
+            document.getElementById('qualOriginalName').value = '';
+            document.getElementById('qualImagePreview').style.display = 'none';
+        }
+
+        function clearSkillForm() {
+            document.getElementById('skillForm').reset();
+            document.getElementById('skillIsEdit').value = 'false';
+            document.getElementById('skillOriginalName').value = '';
+            document.getElementById('skillLevel').value = 5;
+            document.getElementById('skillLevelValue').textContent = '5';
+        }
+
+        // Helper Functions
+        function formatEducationDuration(startDate, endDate) {
+            let duration = '';
+            if (startDate) {
+                duration += formatDate(startDate);
+            }
+            duration += ' - ';
+            if (endDate) {
+                duration += formatDate(endDate);
+            } else {
+                duration += 'Present';
+            }
+            return duration;
+        }
+
+        function addAccomplishment(value = '') {
+            const newField = `
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control accomplishment" value="${value}" required>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger" onclick="removeAccomplishment(this)">Remove</button>
+                                            </div>
+                                        </div>
+                                    `;
+            document.getElementById('accomplishmentsList').insertAdjacentHTML('beforeend', newField);
+        }
+
+        function removeAccomplishment(button) {
+            button.closest('.input-group').remove();
+        }
+
+        // File Preview Handlers
+        document.getElementById('eduImage').addEventListener('change', async function () {
+            const preview = document.getElementById('eduImagePreview');
+            const file = this.files[0];
+            if (file) {
+                const base64 = await convertToBase64(file);
+                preview.src = base64;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('expImage').addEventListener('change', async function () {
+            const preview = document.getElementById('expImagePreview');
+            const file = this.files[0];
+            if (file) {
+                const base64 = await convertToBase64(file);
+                preview.src = base64;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('projectVideo').addEventListener('change', function () {
+            const preview = document.getElementById('projectVideoPreview');
+            const file = this.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('qualificationImage').addEventListener('change', async function () {
+            const preview = document.getElementById('qualImagePreview');
+            const file = this.files[0];
+            if (file) {
+                const base64 = await convertToBase64(file);
+                preview.src = base64;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Skill Level Display Handler
+        document.getElementById('skillLevel').addEventListener('input', function () {
+            document.getElementById('skillLevelValue').textContent = this.value;
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+
+            // Initialize date inputs as disabled
+            document.getElementById('eduStartDate').disabled = true;
+            document.getElementById('eduEndDate').disabled = true;
+            document.getElementById('expStartDate').disabled = true;
+            document.getElementById('expEndDate').disabled = true;
+
+            // Add initial accomplishment field
+            addAccomplishment();
+        });
+    </script>
+}

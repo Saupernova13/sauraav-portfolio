@@ -1,4 +1,38 @@
 ﻿@{
+    string FormatDate(string date)
+    {
+        if (string.IsNullOrEmpty(date)) return string.Empty;
+        if (DateTime.TryParse(date, out DateTime parsedDate))
+        {
+            return parsedDate.ToString("MMM yyyy");
+        }
+        return date;
+    }
+
+    string FormatDateRange(string startDate, string endDate)
+    {
+        string start = FormatDate(startDate);
+        string end = FormatDate(endDate);
+
+        if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            return string.Empty;
+        if (string.IsNullOrEmpty(end))
+            return start;
+        if (string.IsNullOrEmpty(start))
+            return end;
+
+        return $"{start} - {end}";
+    }
+
+    string GetBase64Image(string base64String)
+    {
+        if (string.IsNullOrEmpty(base64String)) return string.Empty;
+        return $"data:image/jpeg;base64,{base64String.Trim()}";
+    }
+}
+
+@model sauraav_portfolio_site.Models.PortfolioViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 <!DOCTYPE html>
@@ -10,17 +44,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="~/css/stars_bg.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/dynamic_typed.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" /> 
+    <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/mobile_optimisations.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/portfolio_sections.css" asp-append-version="true" />
 </head>
 <body>
     <div class="starfield-container" id="myStarfield"></div>
 
-    <!-- Section 1 -->
+    <!-- Section 1: Introduction -->
     <section id="section1">
-        <div class="main-container" style="margin-top: -60px;">
+        <div class="main-container cyber-button" style="margin-top: -60px;">
             <div class="text-content">
-                <h1 class="welcome-message">Greetings cyber citizen!</h1>
+                <h1 class="welcome-message">Welcome! Greetings!</h1>
                 <div class="name-text">My name is Sauraav Jayrajh.</div>
                 <div class="typing-container">
                     I'm <span class="typing-text"></span>
@@ -31,7 +66,6 @@
                     <img src="~/images/PFP_No_Me.png" alt="Background" class="profile-pic background-img">
                     <img src="~/images/PFP_With_Me.png" alt="Profile Picture" class="profile-pic foreground-img">
                 </div>
-                <!-- Add this new div -->
                 <div class="social-icons-mobile">
                     <a href="https://github.com/Saupernova13" class="social-icon-mobile" target="_blank">
                         <img src="/images/github.png" alt="GitHub">
@@ -46,29 +80,190 @@
                         <img src="/images/phone.png" alt="Phone">
                     </a>
                 </div>
-
             </div>
         </div>
-        <button class="scroll-button" onclick="scrollToSection('section2')">
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section2')">
             <i class="fas fa-chevron-down"></i>
         </button>
     </section>
 
-    <!-- Section 2 -->
-    <section id="section2">
-        <div class="min-vh-100"></div>
+    <!-- Section 2: Summary -->
+    <section id="section2" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">About Me</h2>
+            <div class="summary-container">
+                @if (!string.IsNullOrEmpty(Model.Summary?.Summary))
+                {
+                    <p>@Model.Summary.Summary</p>
+                }
+            </div>
+        </div>
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section3')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
     </section>
 
-    <!-- Section 3 -->
-    <section id="section3">
-        <div class="min-vh-100"></div>
+    <!-- Section 3: Education -->
+    <section id="section3" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Education</h2>
+            <div class="education-grid">
+                @if (Model.Education != null)
+                {
+                    foreach (var edu in Model.Education.Values)
+                    {
+                        <div class="education-card">
+                            @if (!string.IsNullOrEmpty(edu.ImageBase64))
+                            {
+                                <div class="image-container">
+                                    <img src="@GetBase64Image(edu.ImageBase64)" alt="@edu.SchoolName" class="education-image" />
+                                </div>
+                            }
+                            <h3>@edu.SchoolName</h3>
+                            <p class="location">@edu.Location</p>
+                            <p class="period">@FormatDateRange(edu.StartDate.ToString(), edu.EndDate.ToString())</p>
+                            <p class="description">@edu.Description</p>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section4')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
     </section>
 
+    <!-- Section 4: Experience -->
+    <section id="section4" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Experience</h2>
+            <div class="experience-grid">
+                @if (Model.Experience != null)
+                {
+                    foreach (var exp in Model.Experience.Values)
+                    {
+                        <div class="experience-card">
+                            @if (!string.IsNullOrEmpty(exp.ImageBase64))
+                            {
+                                <div class="image-container">
+                                    <img src="@GetBase64Image(exp.ImageBase64)" alt="@exp.Title" class="experience-image" />
+                                </div>
+                            }
+                            <h3>@exp.Title</h3>
+                            <p class="location">@exp.Location</p>
+                            <p class="period">@FormatDateRange(exp.StartDate.ToString(), exp.EndDate.ToString())</p>
+                            @if (exp.Accomplishments != null && exp.Accomplishments.Any())
+                            {
+                                <ul class="accomplishments">
+                                    @foreach (var accomplishment in exp.Accomplishments)
+                                    {
+                                        <li>@accomplishment</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section5')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </section>
+
+    <!-- Section 5: Projects -->
+    <section id="section5" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                @if (Model.Projects != null)
+                {
+                    foreach (var project in Model.Projects.Values)
+                    {
+                        <div class="project-card">
+                            <h3>@project.ProjectName</h3>
+                            <p class="description">@project.Description</p>
+                            @if (!string.IsNullOrEmpty(project.ProjectLink))
+                            {
+                                <a href="@project.ProjectLink" class="project-link" target="_blank">
+                                    View Project <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(project.DemoVideoPath))
+                            {
+                                <div class="gif-container">
+                                    <img src="@project.DemoVideoPath" alt="@project.ProjectName demo" class="project-gif" />
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section6')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </section>
+
+
+    <!-- Section 6: Qualifications -->
+    <section id="section6" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Qualifications</h2>
+            <div class="qualifications-grid">
+                @if (Model.Qualifications != null)
+                {
+                    foreach (var qual in Model.Qualifications.Values)
+                    {
+                        <div class="qualification-card">
+                            @if (!string.IsNullOrEmpty(qual.ImageBase64))
+                            {
+                                <div class="image-container">
+                                    <img src="@GetBase64Image(qual.ImageBase64)" alt="@qual.QualificationName" class="qualification-image" />
+                                </div>
+                            }
+                            <h3>@qual.QualificationName</h3>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </section>
+
+    <!-- Section 7: Skills -->
+    <section id="section7" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills-grid">
+                @if (Model.Skills != null)
+                {
+                    foreach (var skill in Model.Skills.Values)
+                    {
+                        <div class="skill-card">
+                            <h3>@skill.SkillName</h3>
+                            <div class="proficiency-bar">
+                                <div class="proficiency-level" style="width: @(skill.SkillLevel * 10)%"></div>
+                            </div>
+                            <span class="skill-level">@skill.SkillLevel/10</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
     <script src="~/js/stars_bg.js" asp-append-version="true"></script>
     <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
     <script src="~/js/parallax.js" asp-append-version="true"></script>
     <script src="~/js/scroll_logic.js" asp-append-version="true"></script>
     <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
-
+    <script src="~/js/particle_effects.js" asp-append-version="true"></script>
 </body>
 </html>

@@ -52,7 +52,6 @@ section {
     width: 100%;
     position: relative;
 }
-
 .scroll-button {
     position: absolute;
     bottom: 30px;
@@ -68,11 +67,16 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: globalPulse 2s ease-in-out infinite;
+    animation-play-state: running;
 }
 
     .scroll-button:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: translateX(-50%) translateY(-5px);
+        animation: none;
+        border-color: #ff9900;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 50px rgba(255, 166, 0, 0.4);
     }
 
     .scroll-button i {
