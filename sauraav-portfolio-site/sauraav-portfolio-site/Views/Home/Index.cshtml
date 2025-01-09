@@ -53,6 +53,7 @@
     <link rel="stylesheet" href="~/css/summary_section.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/skills_section.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/section_styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tech_stack_section.css" asp-append-version="true" />
 </head>
 <body>
     <div class="starfield-container" id="myStarfield"></div>
@@ -82,8 +83,11 @@
                     <a href="mailto:sauraavjayrajh@gmail.com" class="social-icon-mobile" target="_blank">
                         <img src="/images/email.png" alt="Email">
                     </a>
-                    <a href="https://wa.me/0719244175" class="social-icon-mobile" target="_blank">
-                        <img src="/images/phone.png" alt="Phone">
+                    <a href="https://stardustsoftware.carrd.co/" class="social-icon-mobile" target="_blank">
+                        <img src="/images/stardust.png" alt="Stardust Software">
+                    </a>
+                    <a href="https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing" class="social-icon-mobile" target="_blank">
+                        <img src="/images/cv.png" alt="cv">
                     </a>
                 </div>
             </div>
@@ -238,7 +242,7 @@
         <br/>
         <br/>
         <br/>
-        <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section6')">
             <i class="fas fa-chevron-down"></i>
         </button>
     </section>
@@ -301,6 +305,103 @@
                 }
             </div>
         </div>
+        <br />  
+        <br />
+        <br />
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section8')">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </section>
+
+    <!-- Section 8: Tech Stack -->
+    <section id="section8" class="portfolio-section">
+        <div class="section-content">
+            <h2 class="section-title">Tech Stack</h2>
+            <div class="tech-stack-container">
+                <!-- Programming Languages -->
+                <div class="tech-icon-wrapper" data-tech="C#">
+                    <img src="~/images/csharp.png" alt="C#" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Java">
+                    <img src="~/images/java.png" alt="Java" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="JavaScript">
+                    <img src="~/images/javascript.png" alt="JavaScript" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Kotlin">
+                    <img src="~/images/kotlin.png" alt="Kotlin" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Delphi">
+                    <img src="~/images/delphi.png" alt="Delphi" class="tech-icon" />
+                </div>
+
+                <!-- Web Technologies -->
+                <div class="tech-icon-wrapper" data-tech="HTML">
+                    <img src="~/images/html.png" alt="HTML" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="CSS">
+                    <img src="~/images/css.png" alt="CSS" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech=".NET">
+                    <img src="~/images/dotnet.png" alt=".NET" class="tech-icon" />
+                </div>
+
+                <!-- Databases -->
+                <div class="tech-icon-wrapper" data-tech="SQL Server">
+                    <img src="~/images/mssqlserver.png" alt="SQL Server" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="MySQL">
+                    <img src="~/images/mysql.png" alt="MySQL" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="MongoDB">
+                    <img src="~/images/mongodb.png" alt="MongoDB" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Firebase">
+                    <img src="~/images/firebase.png" alt="Firebase" class="tech-icon" />
+                </div>
+
+                <!-- Development Tools -->
+                <div class="tech-icon-wrapper" data-tech="GitHub">
+                    <img src="~/images/github.png" alt="GitHub" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Azure">
+                    <img src="~/images/azure.png" alt="Azure" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Linux">
+                    <img src="~/images/linux.png" alt="Linux" class="tech-icon" />
+                </div>
+
+                <!-- Game Development -->
+                <div class="tech-icon-wrapper" data-tech="Unity">
+                    <img src="~/images/unity.png" alt="Unity" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Godot">
+                    <img src="~/images/godot.png" alt="Godot" class="tech-icon" />
+                </div>
+
+                <!-- AI and Documentation -->
+                <div class="tech-icon-wrapper" data-tech="ChatGPT">
+                    <img src="~/images/chatgpt.png" alt="ChatGPT" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Claude">
+                    <img src="~/images/claude.png" alt="Claude" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="LLaMA">
+                    <img src="~/images/llama.png" alt="LLaMA" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="LaTeX">
+                    <img src="~/images/latex.png" alt="LaTeX" class="tech-icon" />
+                </div>
+
+                <!-- Creative Tools -->
+                <div class="tech-icon-wrapper" data-tech="Blender">
+                    <img src="~/images/blender.png" alt="Blender" class="tech-icon" />
+                </div>
+                <div class="tech-icon-wrapper" data-tech="Photoshop">
+                    <img src="~/images/photoshop.png" alt="Photoshop" class="tech-icon" />
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Scripts -->
@@ -317,6 +418,7 @@
     <script src="~/js/summary_section.js" asp-append-version="true"></script>
     <script src="~/js/skills_section.js" asp-append-version="true"></script>
     <script src="~/js/section_animations.js" asp-append-version="true"></script>
+    <script src="~/js/tech_stack_section.js" asp-append-version="true"></script>
 
 </body>
 </html>

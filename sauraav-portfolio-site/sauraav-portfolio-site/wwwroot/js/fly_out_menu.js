@@ -2,7 +2,9 @@
     { img: "/images/github.png", url: "https://github.com/Saupernova13" },
     { img: "/images/linkedin.png", url: "https://www.linkedin.com/in/sauraavjayrajh/" },
     { img: "/images/email.png", url: "mailto:sauraavjayrajh@gmail.com" },
-    { img: "/images/stardust.png", url: "https://stardustsoftware.carrd.co/" }
+    { img: "/images/stardust.png", url: "https://stardustsoftware.carrd.co/" },
+    { img: "/images/cv.png", url: "https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing" }
+
 ];
 
 let activeCircles = [];
