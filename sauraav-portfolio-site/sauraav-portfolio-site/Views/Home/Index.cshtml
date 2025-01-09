@@ -46,7 +46,7 @@
     <link rel="stylesheet" href="~/css/dynamic_typed.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/mobile_optimisations.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/portfolio_sections.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/projects_section.css" asp-append-version="true" />
 </head>
 <body>
     <div class="starfield-container" id="myStarfield"></div>
@@ -113,12 +113,12 @@
                     foreach (var edu in Model.Education.Values)
                     {
                         <div class="education-card">
-                            @if (!string.IsNullOrEmpty(edu.ImageBase64))
+ @*                            @if (!string.IsNullOrEmpty(edu.ImageBase64))
                             {
                                 <div class="image-container">
                                     <img src="@GetBase64Image(edu.ImageBase64)" alt="@edu.SchoolName" class="education-image" />
                                 </div>
-                            }
+                            } *@
                             <h3>@edu.SchoolName</h3>
                             <p class="location">@edu.Location</p>
                             <p class="period">@FormatDateRange(edu.StartDate.ToString(), edu.EndDate.ToString())</p>
@@ -128,6 +128,9 @@
                 }
             </div>
         </div>
+        <br />
+        <br />
+        <br />
         <button class="scroll-button cyber-button" onclick="scrollToSection('section4')">
             <i class="fas fa-chevron-down"></i>
         </button>
@@ -143,12 +146,12 @@
                     foreach (var exp in Model.Experience.Values)
                     {
                         <div class="experience-card">
-                            @if (!string.IsNullOrEmpty(exp.ImageBase64))
+@*                             @if (!string.IsNullOrEmpty(exp.ImageBase64))
                             {
                                 <div class="image-container">
                                     <img src="@GetBase64Image(exp.ImageBase64)" alt="@exp.Title" class="experience-image" />
                                 </div>
-                            }
+                            } *@
                             <h3>@exp.Title</h3>
                             <p class="location">@exp.Location</p>
                             <p class="period">@FormatDateRange(exp.StartDate.ToString(), exp.EndDate.ToString())</p>
@@ -166,6 +169,9 @@
                 }
             </div>
         </div>
+        <br />
+        <br />
+        <br />
         <button class="scroll-button cyber-button" onclick="scrollToSection('section5')">
             <i class="fas fa-chevron-down"></i>
         </button>
@@ -175,35 +181,34 @@
     <section id="section5" class="portfolio-section">
         <div class="section-content">
             <h2 class="section-title">Projects</h2>
-            <div class="projects-grid">
-                @if (Model.Projects != null)
-                {
-                    foreach (var project in Model.Projects.Values)
-                    {
-                        <div class="project-card">
-                            <h3>@project.ProjectName</h3>
-                            <p class="description">@project.Description</p>
-                            @if (!string.IsNullOrEmpty(project.ProjectLink))
-                            {
-                                <a href="@project.ProjectLink" class="project-link" target="_blank">
-                                    View Project <i class="fas fa-external-link-alt"></i>
-                                </a>
-                            }
-                            @if (!string.IsNullOrEmpty(project.DemoVideoPath))
-                            {
-                                <div class="gif-container">
-                                    <img src="@project.DemoVideoPath" alt="@project.ProjectName demo" class="project-gif" />
-                                </div>
-                            }
+            <div class="projects-container">
+                <div class="project-preview">
+                    <div class="preview-content">
+                        <img class="project-gif" src="" alt="Project Preview">
+                        <div class="project-overlay">
+                            <p class="project-description"></p>
                         </div>
+                    </div>
+                </div>
+                <div class="projects-list">
+                    @if (Model.Projects != null)
+                    {
+                        foreach (var project in Model.Projects.Values)
+                        {
+                            <div class="project-item"
+                                 data-gif="@project.DemoVideoPath"
+                                 data-description="@project.Description">
+                                <div class="project-name">@project.ProjectName</div>
+                                <a href="@project.ProjectLink" class="visit-button" target="_blank">
+                                    Visit Project
+                                </a>
+                            </div>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-        <br />
-        <br />
-        <br />
-        <button class="scroll-button cyber-button" onclick="scrollToSection('section6')">
+        <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
             <i class="fas fa-chevron-down"></i>
         </button>
     </section>
@@ -231,6 +236,9 @@
                 }
             </div>
         </div>
+        <br />
+        <br />
+        <br />
         <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
             <i class="fas fa-chevron-down"></i>
         </button>
@@ -265,5 +273,6 @@
     <script src="~/js/scroll_logic.js" asp-append-version="true"></script>
     <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
     <script src="~/js/particle_effects.js" asp-append-version="true"></script>
+    <script src="~/js/projects_section.js" asp-append-version="true"></script>
 </body>
 </html>
