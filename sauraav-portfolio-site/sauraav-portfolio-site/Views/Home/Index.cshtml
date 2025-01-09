@@ -46,7 +46,12 @@
     <link rel="stylesheet" href="~/css/dynamic_typed.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/mobile_optimisations.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/experience_section.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/projects_section.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/qualifications_section.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/education_section.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/summary_section.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/skills_section.css" asp-append-version="true" />
 </head>
 <body>
     <div class="starfield-container" id="myStarfield"></div>
@@ -94,7 +99,18 @@
             <div class="summary-container">
                 @if (!string.IsNullOrEmpty(Model.Summary?.Summary))
                 {
-                    <p>@Model.Summary.Summary</p>
+                    <div class="summary-content">
+                        <div class="summary-hover-effect"></div>
+                        <div class="summary-text">
+                            @foreach (var paragraph in Model.Summary.Summary.Split("\n"))
+                            {
+                                <p>@paragraph</p>
+                            }
+                        </div>
+                        <div class="summary-decoration">
+                            <div class="code-lines"></div>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -110,27 +126,28 @@
             <div class="education-grid">
                 @if (Model.Education != null)
                 {
-                    foreach (var edu in Model.Education.Values)
+                    foreach (var edu in Model.Education.Values.OrderByDescending(e => e.EndDate ?? DateTime.MaxValue))
                     {
-                        <div class="education-card">
- @*                            @if (!string.IsNullOrEmpty(edu.ImageBase64))
-                            {
-                                <div class="image-container">
-                                    <img src="@GetBase64Image(edu.ImageBase64)" alt="@edu.SchoolName" class="education-image" />
+                        <div class="education-card" data-aos="fade-up">
+                            <div class="education-content">
+                                <div class="education-header">
+                                    <h3 class="institution-name">@edu.SchoolName</h3>
+                                    <span class="education-period">@FormatDateRange(edu.StartDate.ToString(), edu.EndDate.ToString())</span>
                                 </div>
-                            } *@
-                            <h3>@edu.SchoolName</h3>
-                            <p class="location">@edu.Location</p>
-                            <p class="period">@FormatDateRange(edu.StartDate.ToString(), edu.EndDate.ToString())</p>
-                            <p class="description">@edu.Description</p>
+                                <div class="education-details">
+                                    <span class="education-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        @edu.Location
+                                    </span>
+                                    <p class="education-description">@edu.Description</p>
+                                </div>
+                                <div class="education-hover-effect"></div>
+                            </div>
                         </div>
                     }
                 }
             </div>
         </div>
-        <br />
-        <br />
-        <br />
         <button class="scroll-button cyber-button" onclick="scrollToSection('section4')">
             <i class="fas fa-chevron-down"></i>
         </button>
@@ -140,35 +157,42 @@
     <section id="section4" class="portfolio-section">
         <div class="section-content">
             <h2 class="section-title">Experience</h2>
-            <div class="experience-grid">
+            <div class="experience-timeline">
                 @if (Model.Experience != null)
                 {
-                    foreach (var exp in Model.Experience.Values)
+                    foreach (var exp in Model.Experience.Values.OrderByDescending(e => e.EndDate ?? DateTime.MaxValue))
                     {
-                        <div class="experience-card">
-@*                             @if (!string.IsNullOrEmpty(exp.ImageBase64))
-                            {
-                                <div class="image-container">
-                                    <img src="@GetBase64Image(exp.ImageBase64)" alt="@exp.Title" class="experience-image" />
+                        <div class="experience-item">
+                            <div class="experience-marker">
+                                <div class="marker-dot"></div>
+                                <div class="marker-line"></div>
+                            </div>
+                            <div class="experience-content">
+                                <div class="experience-hover-effect"></div>
+                                <div class="experience-header">
+                                    <h3 class="experience-title">@exp.Title</h3>
+                                    <span class="experience-date">@FormatDateRange(exp.StartDate.ToString(), exp.EndDate.ToString())</span>
                                 </div>
-                            } *@
-                            <h3>@exp.Title</h3>
-                            <p class="location">@exp.Location</p>
-                            <p class="period">@FormatDateRange(exp.StartDate.ToString(), exp.EndDate.ToString())</p>
-                            @if (exp.Accomplishments != null && exp.Accomplishments.Any())
-                            {
-                                <ul class="accomplishments">
-                                    @foreach (var accomplishment in exp.Accomplishments)
-                                    {
-                                        <li>@accomplishment</li>
-                                    }
-                                </ul>
-                            }
+                                <span class="experience-location">@exp.Location</span>
+                                @if (exp.Accomplishments != null && exp.Accomplishments.Any())
+                                {
+                                    <div class="experience-details">
+                                        <ul class="accomplishments-list">
+                                            @foreach (var accomplishment in exp.Accomplishments)
+                                            {
+                                                <li>@accomplishment</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                 }
             </div>
         </div>
+        <br />
+        <br />
         <br />
         <br />
         <br />
@@ -224,21 +248,21 @@
                     foreach (var qual in Model.Qualifications.Values)
                     {
                         <div class="qualification-card">
-                            @if (!string.IsNullOrEmpty(qual.ImageBase64))
-                            {
-                                <div class="image-container">
-                                    <img src="@GetBase64Image(qual.ImageBase64)" alt="@qual.QualificationName" class="qualification-image" />
-                                </div>
-                            }
-                            <h3>@qual.QualificationName</h3>
+                            <div class="qualification-content">
+                                <div class="qualification-hover-effect"></div>
+                                @if (!string.IsNullOrEmpty(qual.ImageBase64))
+                                {
+                                    <div class="image-container">
+                                        <img src="@GetBase64Image(qual.ImageBase64)" alt="@qual.QualificationName" class="qualification-image" />
+                                    </div>
+                                }
+                                <h3 class="qualification-name">@qual.QualificationName</h3>
+                            </div>
                         </div>
                     }
                 }
             </div>
         </div>
-        <br />
-        <br />
-        <br />
         <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
             <i class="fas fa-chevron-down"></i>
         </button>
@@ -248,17 +272,24 @@
     <section id="section7" class="portfolio-section">
         <div class="section-content">
             <h2 class="section-title">Skills</h2>
-            <div class="skills-grid">
+            <div class="skills-container">
                 @if (Model.Skills != null)
                 {
-                    foreach (var skill in Model.Skills.Values)
+                    @foreach (var skill in Model.Skills.Values.OrderByDescending(s => s.SkillLevel))
                     {
                         <div class="skill-card">
-                            <h3>@skill.SkillName</h3>
-                            <div class="proficiency-bar">
-                                <div class="proficiency-level" style="width: @(skill.SkillLevel * 10)%"></div>
+                            <div class="skill-content">
+                                <div class="skill-hover-effect"></div>
+                                <div class="skill-info">
+                                    <h3 class="skill-name">@skill.SkillName</h3>
+                                    <div class="skill-level-container">
+                                        <div class="skill-bar">
+                                            <div class="skill-progress" data-level="@skill.SkillLevel"></div>
+                                        </div>
+                                        <span class="skill-level-text">@skill.SkillLevel/10</span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="skill-level">@skill.SkillLevel/10</span>
                         </div>
                     }
                 }
@@ -274,5 +305,10 @@
     <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
     <script src="~/js/particle_effects.js" asp-append-version="true"></script>
     <script src="~/js/projects_section.js" asp-append-version="true"></script>
+    <script src="~/js/experience_section.js" asp-append-version="true"></script>
+    <script src="~/js/qualifications_section.js" asp-append-version="true"></script>
+    <script src="~/js/education_section.js" asp-append-version="true"></script>
+    <script src="~/js/summary_section.js" asp-append-version="true"></script>
+    <script src="~/js/skills_section.js" asp-append-version="true"></script>
 </body>
 </html>

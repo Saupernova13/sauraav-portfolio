@@ -1,0 +1,171 @@
+﻿.education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.education-card {
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+    .education-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+.education-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0px 90px 0px 90px;
+    padding: 2rem;
+    height: 100%;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.education-header {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1.5rem;
+}
+
+.institution-name {
+    font-family: 'gendy', sans-serif;
+    font-size: 1.5rem;
+    background: linear-gradient(165deg, #4d71ad, #528cdf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.education-period {
+    font-family: 'Roboto', sans-serif;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    display: block;
+}
+
+.education-details {
+    position: relative;
+    z-index: 2;
+}
+
+.education-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Roboto', sans-serif;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1rem;
+}
+
+    .education-location i {
+        color: #528cdf;
+    }
+
+.education-description {
+    font-family: 'Roboto', sans-serif;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.education-hover-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient( circle at center, rgba(82, 140, 223, 0.1) 0%, transparent 70% );
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    transition: all 0.5s ease;
+    pointer-events: none;
+
+}
+
+/* Hover Effects */
+.education-card:hover .education-content {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 10px 10px 0 rgba(255, 255, 255, 1);
+}
+
+.education-card:hover .education-hover-effect {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Animation Classes */
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-animate {
+    animation: cardEntrance 0.5s ease forwards;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 768px) {
+    .education-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    .education-content {
+        border-radius: 0px 45px 0px 45px;
+        padding: 1.5rem;
+    }
+
+    .institution-name {
+        font-size: 1.3rem;
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .education-card:hover .education-content {
+            transform: none;
+        }
+
+        .education-content {
+            transition: transform 0.3s ease;
+        }
+
+        .education-card.touch-active .education-content {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(0.98);
+        }
+    }
+}
+
+/* Small screen optimizations */
+@media screen and (max-width: 380px) {
+    .education-content {
+        padding: 1.2rem;
+    }
+
+    .institution-name {
+        font-size: 1.2rem;
+    }
+
+    .education-period,
+    .education-location {
+        font-size: 0.8rem;
+    }
+}
