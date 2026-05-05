@@ -1,22 +1,13 @@
-﻿namespace sauraav_portfolio_site.Models
-{
-    public class WorkExperienceModel
-    {
-        public WorkExperienceModel()
-        {
-            // Initialize properties to prevent null reference exceptions
-            Title = "";
-            Location = "";
-            Accomplishments = new List<string>();
-            ImageBase64 = "";
-        }
+using System.ComponentModel.DataAnnotations;
 
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Location { get; set; }
-        public List<string> Accomplishments { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public string ImageBase64 { get; set; }
-    }
+namespace sauraav_portfolio_site.Models;
+
+public sealed class WorkExperienceModel
+{
+    [Required, StringLength(200)] public string? Title { get; set; }
+    [StringLength(200)] public string? Location { get; set; }
+    public List<string> Accomplishments { get; set; } = [];
+    public string? StartDate { get; set; }
+    public string? EndDate { get; set; }
+    public string? ImageBase64 { get; set; }
 }

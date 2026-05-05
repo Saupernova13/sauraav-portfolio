@@ -1,8 +1,8 @@
-﻿namespace sauraav_portfolio_site.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace sauraav_portfolio_site.Models;
+
+public sealed class SummaryModel
 {
-    public class SummaryModel
-    {
-        public int Id { get; set; }
-        public string Summary { get; set; }
-    }
+    [StringLength(5000)] public string? Summary { get; set; }
 }

@@ -1,9 +1,9 @@
-﻿namespace sauraav_portfolio_site.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace sauraav_portfolio_site.Models;
+
+public sealed class SkillsModel
 {
-    public class SkillsModel
-    {
-        public int Id { get; set; }
-        public string SkillName { get; set; }
-        public int SkillLevel { get; set; }
-    }
+    [Required, StringLength(200)] public string? SkillName { get; set; }
+    [Range(0, 100)] public int SkillLevel { get; set; }
 }

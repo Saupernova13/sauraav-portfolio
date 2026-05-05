@@ -1,271 +1,176 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using sauraav_portfolio_site.Filters;
+using sauraav_portfolio_site.Helpers;
 using sauraav_portfolio_site.Models;
 using sauraav_portfolio_site.Services;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-public class AdminController : Controller
+namespace sauraav_portfolio_site.Controllers;
+
+[Authorize]
+[ServiceFilter(typeof(ApiExceptionFilter))]
+public sealed class AdminController : Controller
 {
-    private readonly FirebaseService _firebaseService;
+    private static readonly JsonSerializerOptions CaseInsensitiveOptions = new() { PropertyNameCaseInsensitive = true };
 
-    public AdminController(FirebaseService firebaseService)
-    {
-        _firebaseService = firebaseService;
-    }
+    private readonly IFirebaseService _firebase;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public AdminController(IFirebaseService firebase) => _firebase = firebase;
 
-    // Summary Actions
+    public IActionResult Index() => View();
+
+    // Summary
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveSummary([FromBody] SummaryModel summary)
     {
-        try
-        {
-            await _firebaseService.SetData("summary", summary);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.SetData("summary", summary);
+        return Json(new { success = true });
     }
 
-    // Education Actions
+    // Education
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddEducation([FromBody] EducationModel education)
     {
-        try
-        {
-            string nodePath = $"education/{education.SchoolName}";
-            await _firebaseService.SetData(nodePath, education);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var key = FirebaseKeySanitizer.Sanitize(education.SchoolName ?? string.Empty);
+        await _firebase.SetData($"education/{key}", education);
+        return Json(new { success = true });
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteEducation(string schoolName)
     {
-        try
-        {
-            await _firebaseService.DeleteData($"education/{schoolName}");
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.DeleteData($"education/{FirebaseKeySanitizer.Sanitize(schoolName)}");
+        return Json(new { success = true });
     }
 
-    // Experience Actions
+    // Experience
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddExperience([FromBody] WorkExperienceModel experience)
     {
-        try
-        {
-            string nodePath = $"experience/{experience.Title}";
-            await _firebaseService.SetData(nodePath, experience);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var key = FirebaseKeySanitizer.Sanitize(experience.Title ?? string.Empty);
+        await _firebase.SetData($"experience/{key}", experience);
+        return Json(new { success = true });
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteExperience(string title)
     {
-        try
-        {
-            await _firebaseService.DeleteData($"experience/{title}");
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.DeleteData($"experience/{FirebaseKeySanitizer.Sanitize(title)}");
+        return Json(new { success = true });
     }
 
+    // Projects
+
     [HttpPost]
-    public async Task<IActionResult> AddProject([FromForm] IFormFile video, [FromForm] string projectData)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddProject([FromForm] IFormFile? video, [FromForm] string projectData)
     {
-        try
+        var project = JsonSerializer.Deserialize<ProjectModel>(projectData, CaseInsensitiveOptions);
+
+        if (project is null)
+            return Json(new { success = false, message = "Invalid project data" });
+
+        if (video is not null)
+            project.DemoVideoPath = await SaveVideoAsync(video);
+
+        var key = FirebaseKeySanitizer.Sanitize(project.ProjectName ?? string.Empty);
+        await _firebase.SetData($"projects/{key}", new
         {
-            // Deserialize the project data
-            var project = JsonSerializer.Deserialize<ProjectModel>(projectData, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            projectName = project.ProjectName,
+            description = project.Description,
+            projectLink = project.ProjectLink,
+            demoVideoPath = project.DemoVideoPath,
+        });
 
-            if (project == null)
-            {
-                return Json(new { success = false, message = "Invalid project data" });
-            }
-
-            // Sanitize project name for Firebase path
-            string sanitizedProjectName = project.ProjectName
-                .Replace("/", "_")
-                .Replace(".", "_")
-                .Replace("#", "_")
-                .Replace("$", "_")
-                .Replace("[", "_")
-                .Replace("]", "_");
-
-            if (video != null)
-            {
-                // Save the video and get the path
-                string videoPath = await SaveVideo(video);
-                project.DemoVideoPath = videoPath;
-            }
-
-            string nodePath = $"projects/{sanitizedProjectName}";
-            await _firebaseService.SetData(nodePath, new
-            {
-                projectName = project.ProjectName,
-                description = project.Description,
-                projectLink = project.ProjectLink,
-                demoVideoPath = project.DemoVideoPath
-            });
-
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
-    }   
+        return Json(new { success = true });
+    }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteProject(string projectName)
     {
-        try
-        {
-            await _firebaseService.DeleteData($"projects/{projectName}");
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.DeleteData($"projects/{FirebaseKeySanitizer.Sanitize(projectName)}");
+        return Json(new { success = true });
     }
 
-    // Qualification Actions
+    // Qualifications
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddQualification([FromBody] QualificationModel qualification)
     {
-        try
-        {
-            string nodePath = $"qualifications/{qualification.QualificationName}";
-            await _firebaseService.SetData(nodePath, qualification);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var key = FirebaseKeySanitizer.Sanitize(qualification.QualificationName ?? string.Empty);
+        await _firebase.SetData($"qualifications/{key}", qualification);
+        return Json(new { success = true });
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteQualification(string qualificationName)
     {
-        try
-        {
-            await _firebaseService.DeleteData($"qualifications/{qualificationName}");
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.DeleteData($"qualifications/{FirebaseKeySanitizer.Sanitize(qualificationName)}");
+        return Json(new { success = true });
     }
 
-    // Skills Actions
+    // Skills
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddSkill([FromBody] SkillsModel skill)
     {
-        try
-        {
-            string nodePath = $"skills/{skill.SkillName}";
-            await _firebaseService.SetData(nodePath, skill);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var key = FirebaseKeySanitizer.Sanitize(skill.SkillName ?? string.Empty);
+        await _firebase.SetData($"skills/{key}", skill);
+        return Json(new { success = true });
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteSkill(string skillName)
     {
-        try
-        {
-            await _firebaseService.DeleteData($"skills/{skillName}");
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        await _firebase.DeleteData($"skills/{FirebaseKeySanitizer.Sanitize(skillName)}");
+        return Json(new { success = true });
     }
 
-    // Get All Data
+    // Data
+
     [HttpGet]
     public async Task<IActionResult> GetAllData()
     {
-        try
-        {
-            var summary = await _firebaseService.GetData<SummaryModel>("summary");
-            var education = await _firebaseService.GetData<Dictionary<string, EducationModel>>("education");
-            var experience = await _firebaseService.GetData<Dictionary<string, WorkExperienceModel>>("experience");
-            var projects = await _firebaseService.GetData<Dictionary<string, ProjectModel>>("projects");
-            var qualifications = await _firebaseService.GetData<Dictionary<string, QualificationModel>>("qualifications");
-            var skills = await _firebaseService.GetData<Dictionary<string, SkillsModel>>("skills");
+        var summary = _firebase.GetData<SummaryModel>("summary");
+        var education = _firebase.GetData<Dictionary<string, EducationModel>>("education");
+        var experience = _firebase.GetData<Dictionary<string, WorkExperienceModel>>("experience");
+        var projects = _firebase.GetData<Dictionary<string, ProjectModel>>("projects");
+        var qualifications = _firebase.GetData<Dictionary<string, QualificationModel>>("qualifications");
+        var skills = _firebase.GetData<Dictionary<string, SkillsModel>>("skills");
 
-            return Json(new
-            {
-                summary,
-                education,
-                experience,
-                projects,
-                qualifications,
-                skills
-            });
-        }
-        catch (Exception ex)
+        await Task.WhenAll(summary, education, experience, projects, qualifications, skills);
+
+        return Json(new
         {
-            return Json(new { success = false, message = ex.Message });
-        }
+            summary = await summary,
+            education = await education,
+            experience = await experience,
+            projects = await projects,
+            qualifications = await qualifications,
+            skills = await skills,
+        });
     }
 
-    private async Task<string> SaveVideo(IFormFile video)
+    private static async Task<string> SaveVideoAsync(IFormFile video)
     {
-        if (video == null || video.Length == 0)
-            return null;
-
-        // Create videos directory if it doesn't exist
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
-        if (!Directory.Exists(uploadsFolder))
-            Directory.CreateDirectory(uploadsFolder);
+        Directory.CreateDirectory(uploadsFolder);
 
-        // Generate unique filename
-        var uniqueFileName = $"{Guid.NewGuid()}_{video.FileName}";
+        var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(video.FileName)}";
         var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-        // Save the file
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-            await video.CopyToAsync(fileStream);
-        }
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await video.CopyToAsync(stream);
 
-        // Return the relative path
         return $"/videos/{uniqueFileName}";
     }
 }

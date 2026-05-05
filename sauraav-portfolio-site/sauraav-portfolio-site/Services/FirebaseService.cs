@@ -1,106 +1,78 @@
-﻿namespace sauraav_portfolio_site.Services
+using Firebase.Database;
+using Firebase.Database.Query;
+using Microsoft.Extensions.Options;
+using sauraav_portfolio_site.Models;
+
+namespace sauraav_portfolio_site.Services;
+
+public sealed class FirebaseOptions
 {
-    using Firebase.Database;
-    using Firebase.Database.Query;
-    using Microsoft.Extensions.Logging;
-    using sauraav_portfolio_site.Models;
+    public string DatabaseUrl { get; set; } = string.Empty;
+}
 
-    public class FirebaseService
+public sealed class FirebaseService : IFirebaseService, IDisposable
+{
+    private readonly FirebaseClient _client;
+    private readonly ILogger<FirebaseService> _logger;
+
+    private static readonly Action<ILogger, Exception?> LogInvalidBase64 =
+        LoggerMessage.Define(LogLevel.Warning, new EventId(1, "InvalidBase64"), "Invalid base64 string discarded");
+
+    public FirebaseService(IOptions<FirebaseOptions> options, ILogger<FirebaseService> logger)
     {
-        private readonly FirebaseClient _firebaseClient;
-        private readonly ILogger<FirebaseService> _logger;
-        private const string FirebaseUrl = "https://sauraav-portfolio-site-default-rtdb.europe-west1.firebasedatabase.app/";
+        _logger = logger;
+        _client = new FirebaseClient(options.Value.DatabaseUrl);
+    }
 
-        public FirebaseService(ILogger<FirebaseService> logger)
+    public async Task<T> GetData<T>(string node)
+    {
+        var result = await _client.Child(node).OnceSingleAsync<T>();
+        SanitizeBase64Fields(result);
+        return result;
+    }
+
+    public async Task SetData<T>(string node, T data) =>
+        await _client.Child(node).PutAsync(data);
+
+    public async Task DeleteData(string node) =>
+        await _client.Child(node).DeleteAsync();
+
+    public void Dispose() => _client.Dispose();
+
+    private void SanitizeBase64Fields(object? result)
+    {
+        switch (result)
         {
-            _firebaseClient = new FirebaseClient(FirebaseUrl);
-            _logger = logger;
+            case Dictionary<string, EducationModel> edu:
+                foreach (var v in edu.Values) v.ImageBase64 = CleanBase64(v.ImageBase64);
+                break;
+            case Dictionary<string, WorkExperienceModel> exp:
+                foreach (var v in exp.Values) v.ImageBase64 = CleanBase64(v.ImageBase64);
+                break;
+            case Dictionary<string, QualificationModel> qual:
+                foreach (var v in qual.Values) v.ImageBase64 = CleanBase64(v.ImageBase64);
+                break;
         }
+    }
 
-        public async Task<T> GetData<T>(string node)
-        {
-            try
-            {
-                var result = await _firebaseClient.Child(node).OnceSingleAsync<T>();
+    private string? CleanBase64(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
 
-                // Handle base64 image data based on type
-                if (result is Dictionary<string, EducationModel> educationDict)
-                {
-                    foreach (var edu in educationDict.Values)
-                    {
-                        edu.ImageBase64 = CleanBase64String(edu.ImageBase64);
-                    }
-                }
-                else if (result is Dictionary<string, WorkExperienceModel> experienceDict)
-                {
-                    foreach (var exp in experienceDict.Values)
-                    {
-                        exp.ImageBase64 = CleanBase64String(exp.ImageBase64);
-                    }
-                }
-                else if (result is Dictionary<string, QualificationModel> qualificationDict)
-                {
-                    foreach (var qual in qualificationDict.Values)
-                    {
-                        qual.ImageBase64 = CleanBase64String(qual.ImageBase64);
-                    }
-                }
+        var span = value.AsSpan().Trim();
+        var commaIdx = span.IndexOf(',');
+        if (commaIdx >= 0)
+            span = span[(commaIdx + 1)..];
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error getting data from node: {node}");
-                throw;
-            }
-        }
+        var cleaned = span.ToString()
+            .Replace("\n", string.Empty, StringComparison.Ordinal)
+            .Replace("\r", string.Empty, StringComparison.Ordinal);
 
-        private string CleanBase64String(string base64String)
-        {
-            if (string.IsNullOrEmpty(base64String))
-                return null;
+        if (Convert.TryFromBase64String(cleaned, new byte[cleaned.Length], out _))
+            return cleaned;
 
-            try
-            {
-                // Remove any whitespace
-                base64String = base64String.Trim();
-
-                // Remove data:image/[type];base64, if it exists
-                if (base64String.Contains(","))
-                {
-                    base64String = base64String.Split(',')[1];
-                }
-
-                // Remove any invalid characters
-                base64String = base64String.Replace("\n", "").Replace("\r", "");
-
-                // Validate that it's a valid base64 string
-                try
-                {
-                    var bytes = Convert.FromBase64String(base64String);
-                    return base64String;
-                }
-                catch
-                {
-                    _logger.LogWarning($"Invalid base64 string detected");
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error cleaning base64 string");
-                return null;
-            }
-        }
-
-        public async Task SetData<T>(string node, T data)
-        {
-            await _firebaseClient.Child(node).PutAsync(data);
-        }
-
-        public async Task DeleteData(string node)
-        {
-            await _firebaseClient.Child(node).DeleteAsync();
-        }
+        LogInvalidBase64(_logger, null);
+        return null;
     }
 }

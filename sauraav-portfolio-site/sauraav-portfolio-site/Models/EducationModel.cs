@@ -1,13 +1,13 @@
-﻿namespace sauraav_portfolio_site.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace sauraav_portfolio_site.Models;
+
+public sealed class EducationModel
 {
-    public class EducationModel
-    {
-        public int Id { get; set; }
-        public string SchoolName { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
-        public DateTime? StartDate { get; set; }  // Made nullable
-        public DateTime? EndDate { get; set; }    // Made nullable
-        public string ImageBase64 { get; set; }
-    }
+    [Required, StringLength(200)] public string? SchoolName { get; set; }
+    [StringLength(2000)] public string? Description { get; set; }
+    [StringLength(200)] public string? Location { get; set; }
+    public string? StartDate { get; set; }
+    public string? EndDate { get; set; }
+    public string? ImageBase64 { get; set; }
 }

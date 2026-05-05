@@ -1,9 +1,9 @@
-﻿namespace sauraav_portfolio_site.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace sauraav_portfolio_site.Models;
+
+public sealed class QualificationModel
 {
-    public class QualificationModel
-    {
-        public int Id { get; set; }
-        public string QualificationName { get; set; }
-        public string ImageBase64 { get; set; }
-    }
+    [Required, StringLength(200)] public string? QualificationName { get; set; }
+    public string? ImageBase64 { get; set; }
 }
