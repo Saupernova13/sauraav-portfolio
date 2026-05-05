@@ -1,0 +1,42 @@
+## Visual Studio / .NET
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+## Build output
+[Bb]in/
+[Oo]bj/
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ASP.NET
+wwwroot/node_modules/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Secrets / environment
+appsettings.*.local.json
+secrets.json
+*.pfx
+*.key
+
+## Logs
+*.log
+logs/
+
+## Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
