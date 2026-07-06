@@ -1,112 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sauraav Jayrajh - Portfolio</title>
+    <title>@ViewData["Title"] - Sauraav Jayrajh</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="icon" type="image/x-icon" href="~/favicon.ico">
-    <style>
-        header {
-            transition: transform 0.3s ease-in-out;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        @@media (min-width: 768px) {
-            /* Desktop styles */
-            .hover-area {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 60px;
-                z-index: 999;
-            }
-
-            .hide-header header {
-                transform: translateY(-100%);
-            }
-
-            .neon-line {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                z-index: 998;
-                opacity: 0;
-                transition: opacity 0.3s ease-in-out;
-            }
-
-                .neon-line::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: #4B7ABE;
-                    box-shadow: 0 0 10px #528cdf, 0 0 15px #528cdf, 0 0 25px #528cdf, 0 0 50px #528cdf;
-                    animation: globalPulse 2s ease-in-out infinite;
-                }
-
-            .hide-header .neon-line {
-                opacity: 1;
-            }
-
-            .neon-line, .hover-area {
-                cursor: pointer;
-            }
-        }
-
-        /* Mobile optimizations */
-        @@media (max-width: 767px) {
-            .navbar-brand {
-                font-size: 1.1rem;
-                padding: 0.5rem 0;
-            }
-
-            .container-fluid {
-                padding: 0 10px;
-            }
-
-            .navbar {
-                padding: 0.5rem 0;
-            }
-
-            .hover-area, .neon-line {
-                display: none;
-            }
-
-            header {
-                position: sticky;
-                transform: none !important;
-            }
-
-            body {
-                padding-top: 0 !important;
-            }
-        }
-
-        body {
-            padding-top: 60px;
-        }
-    </style>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="hide-header">
-    <div class="neon-line"></div>
-    <div class="hover-area"></div>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
+<body>
+    <main role="main">
+        @RenderBody()
+    </main>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

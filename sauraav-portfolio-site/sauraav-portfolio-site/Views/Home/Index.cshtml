@@ -26,9 +26,7 @@
   <link rel="stylesheet" href="~/css/section_styles.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/tech_stack_section.css" asp-append-version="true" />
 </head>
-<body class="hide-header">
-  <div class="neon-line"></div>
-  <div class="hover-area"></div>
+<body>
   <div class="starfield-container" id="myStarfield"></div>
 
   <!-- Section 1: Introduction -->
@@ -63,7 +61,7 @@
         </div>
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section2')">
+    <button class="scroll-button cyber-button" data-scroll-target="section2" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -88,7 +86,7 @@
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section3')">
+    <button class="scroll-button cyber-button" data-scroll-target="section3" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -121,7 +119,7 @@
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section4')">
+    <button class="scroll-button cyber-button" data-scroll-target="section4" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -165,7 +163,7 @@
       </div>
     </div>
     <br /><br /><br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section5')">
+    <button class="scroll-button cyber-button" data-scroll-target="section5" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -202,7 +200,7 @@
       </div>
     </div>
     <br /><br /><br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section6')">
+    <button class="scroll-button cyber-button" data-scroll-target="section6" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -234,7 +232,7 @@
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
+    <button class="scroll-button cyber-button" data-scroll-target="section7" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -267,7 +265,7 @@
       </div>
     </div>
     <br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section8')">
+    <button class="scroll-button cyber-button" data-scroll-target="section8" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
   </section>
@@ -304,21 +302,11 @@
     </div>
   </section>
 
-  <script src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script src="~/js/_layout.js" asp-append-version="true"></script>
   <script src="~/js/stars_bg.js" asp-append-version="true"></script>
-  <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
+  <script src="~/js/dynamic_typed.js" asp-append-version="true"></script>
   <script src="~/js/parallax.js" asp-append-version="true"></script>
-  <script src="~/js/scroll_logic.js" asp-append-version="true"></script>
   <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
   <script src="~/js/particle_effects.js" asp-append-version="true"></script>
-  <script src="~/js/projects_section.js" asp-append-version="true"></script>
-  <script src="~/js/experience_section.js" asp-append-version="true"></script>
-  <script src="~/js/qualifications_section.js" asp-append-version="true"></script>
-  <script src="~/js/education_section.js" asp-append-version="true"></script>
-  <script src="~/js/summary_section.js" asp-append-version="true"></script>
-  <script src="~/js/skills_section.js" asp-append-version="true"></script>
-  <script src="~/js/section_animations.js" asp-append-version="true"></script>
-  <script src="~/js/tech_stack_section.js" asp-append-version="true"></script>
+  <script src="~/js/sections.js" asp-append-version="true"></script>
 </body>
 </html>

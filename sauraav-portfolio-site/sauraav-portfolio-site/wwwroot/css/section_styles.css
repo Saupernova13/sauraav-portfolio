@@ -6,7 +6,12 @@
     justify-content: center;
     padding: 4rem 2rem;
     position: relative;
+    transition: transform 0.3s ease;
 }
+
+    .portfolio-section:hover {
+        transform: scale(1.002);
+    }
 
 .section-content {
     max-width: 1400px;

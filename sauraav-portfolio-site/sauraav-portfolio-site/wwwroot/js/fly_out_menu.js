@@ -1,196 +1,95 @@
-﻿const links = [
-    { img: "/images/github.png", url: "https://github.com/Saupernova13" },
-    { img: "/images/linkedin.png", url: "https://www.linkedin.com/in/sauraavjayrajh/" },
-    { img: "/images/email.png", url: "mailto:sauraavjayrajh@gmail.com" },
-    { img: "/images/stardust.png", url: "https://stardustsoftware.carrd.co/" },
-    { img: "/images/cv.png", url: "https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing" }
+// Social links that fan out from the profile picture (desktop only; mobile
+// shows the static .social-icons-mobile row instead).
+(() => {
+    'use strict';
 
-];
+    const LINKS = [
+        { img: '/images/github.png', url: 'https://github.com/Saupernova13', label: 'GitHub' },
+        { img: '/images/linkedin.png', url: 'https://www.linkedin.com/in/sauraavjayrajh/', label: 'LinkedIn' },
+        { img: '/images/email.png', url: 'mailto:sauraavjayrajh@gmail.com', label: 'Email' },
+        { img: '/images/stardust.png', url: 'https://stardustsoftware.carrd.co/', label: 'Stardust Software' },
+        { img: '/images/cv.png', url: 'https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing', label: 'CV' },
+    ];
 
-let activeCircles = [];
-let lastScrollPosition = window.pageYOffset;
+    const CIRCLE_SIZE = Math.max(50, 100 - LINKS.length * 8);
+    const ANIMATION_MS = 300;
 
-// Track scroll position changes
-let lastKnownScrollPosition = window.scrollY;
+    let circles = [];
 
-// Close menu on any scroll event
-document.addEventListener('scroll', function (e) {
-    if (activeCircles.length > 0 && window.scrollY !== lastKnownScrollPosition) {
-        closeCircles();
-    }
-    lastKnownScrollPosition = window.scrollY;
-}, { passive: true });
+    function open(trigger) {
+        const rect = trigger.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const radius = rect.width / 2;
 
-// Close menu on any mouse click (except the menu itself and profile picture)
-document.addEventListener('mousedown', function (e) {
-    if (!e.target.closest('.flying-circle') &&
-        !e.target.closest('.background-img') &&
-        activeCircles.length > 0) {
-        closeCircles();
-    }
-});
+        const spread = Math.min(120, LINKS.length * 30);
+        const angleStep = spread / (LINKS.length - 1 || 1);
 
-// Close menu when user clicks outside the window
-window.addEventListener('beforeunload', function () {
-    if (activeCircles.length > 0) {
-        closeCircles();
-    }
-});
+        circles = LINKS.map((link, index) => {
+            const angle = (-spread / 2 + index * angleStep) * (Math.PI / 180);
+            const circle = document.createElement('a');
+            circle.href = link.url;
+            circle.target = '_blank';
+            circle.rel = 'noopener noreferrer';
+            circle.className = 'flying-circle';
+            circle.style.cssText =
+                `position:fixed;width:${CIRCLE_SIZE}px;height:${CIRCLE_SIZE}px;opacity:0;z-index:0;` +
+                `left:${centerX + radius - CIRCLE_SIZE / 2}px;top:${centerY - CIRCLE_SIZE / 2}px`;
 
-// Close menu on mousewheel
-document.addEventListener('wheel', function (e) {
-    if (activeCircles.length > 0) {
-        closeCircles();
-    }
-}, { passive: true });
+            const img = document.createElement('img');
+            img.src = link.img;
+            img.alt = link.label;
+            img.style.cssText = 'width:100%;height:100%;object-fit:contain;padding:8px';
+            circle.appendChild(img);
 
-// Close menu on touchmove (for mobile)
-document.addEventListener('touchmove', function (e) {
-    if (activeCircles.length > 0) {
-        closeCircles();
-    }
-}, { passive: true });
+            circle.dataset.homeLeft = circle.style.left;
+            circle.dataset.homeTop = circle.style.top;
+            document.body.appendChild(circle);
 
-// Close menu on scrollbar interaction
-document.addEventListener('mousedown', function (e) {
-    // Check if click is on the scrollbar
-    if (e.clientX >= document.documentElement.offsetWidth ||
-        e.clientY >= document.documentElement.offsetHeight) {
-        if (activeCircles.length > 0) {
-            closeCircles();
-        }
-    }
-}, { passive: true });
+            requestAnimationFrame(() => {
+                circle.style.transition = `all ${ANIMATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+                circle.style.left = `${centerX + Math.cos(angle) * (radius + 100) - CIRCLE_SIZE / 2}px`;
+                circle.style.top = `${centerY + Math.sin(angle) * (radius + 100) - CIRCLE_SIZE / 2}px`;
+                circle.style.opacity = '1';
+                circle.style.zIndex = '1000';
+            });
 
-// Close menu on keyboard scroll (up/down arrows, page up/down, spacebar)
-document.addEventListener('keydown', function (e) {
-    const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Space', ' ', 'Home', 'End'];
-    if (scrollKeys.includes(e.key) && activeCircles.length > 0) {
-        closeCircles();
-    }
-}, { passive: true });
-
-// Additional check for scrollbar clicks
-document.addEventListener('click', function (e) {
-    // Check if click is on the scrollbar
-    if (e.clientX >= document.documentElement.offsetWidth ||
-        e.clientY >= document.documentElement.offsetHeight) {
-        if (activeCircles.length > 0) {
-            closeCircles();
-        }
-    }
-}, { passive: true });
-
-document.querySelector('.background-img').addEventListener('click', function (e) {
-    const rect = this.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const radius = rect.width / 2;
-    const isMobile = window.innerWidth <= 768;
-
-    // Remove any existing circles with animation
-    if (activeCircles.length > 0) {
-        closeCircles();
-        return;
-    }
-
-    const circleSize = Math.max(50, 100 - (links.length * 8));
-
-    links.forEach((link, index) => {
-        const circle = document.createElement('a');
-        circle.href = link.url;
-        circle.target = "_blank";
-        circle.rel = "noopener noreferrer";
-        circle.className = 'flying-circle';
-        circle.style.width = `${circleSize}px`;
-        circle.style.height = `${circleSize}px`;
-        circle.style.position = 'fixed';
-
-        const img = document.createElement('img');
-        img.src = link.img;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'contain';
-        img.style.padding = '8px';
-        circle.appendChild(img);
-
-        if (isMobile) {
-            //// Initial position (underneath the profile picture)
-            //const initialX = centerX - (circleSize / 2);
-            //const initialY = centerY + radius - (circleSize / 2);
-
-            //// Calculate arc positions
-            //const totalAngleSpread = 90; // Degrees for the bottom arc
-            //const startAngle = -180 - (totalAngleSpread / 2); // Center at bottom
-            //const angleStep = totalAngleSpread / (links.length - 1 || 1);
-            //const angle = (startAngle + (index * angleStep)) * (Math.PI / 180);
-            ////Control spread length
-            //const finalRadius = radius * 1.2;
-            //const finalX = centerX + Math.cos(angle) * finalRadius - (circleSize / 2);
-            //const finalY = centerY + radius + Math.abs(Math.sin(angle) * finalRadius) - (circleSize / 2);
-
-            //circle.style.left = `${initialX}px`;
-            //circle.style.top = `${initialY}px`;
-            //circle.style.zIndex = '0';
-            //circle.initialX = initialX;
-            //circle.initialY = initialY;
-            //circle.finalX = finalX;
-            //circle.finalY = finalY;
-        } else {
-            const totalAngleSpread = Math.min(120, links.length * 30);
-            const startAngle = -totalAngleSpread / 2;
-            const angleStep = totalAngleSpread / (links.length - 1 || 1);
-            const angle = (startAngle + (index * angleStep)) * (Math.PI / 180);
-            const finalRadius = radius + 100;
-            const initialX = centerX + radius - (circleSize / 2);
-            const initialY = centerY - (circleSize / 2);
-            const finalX = centerX + Math.cos(angle) * finalRadius - (circleSize / 2);
-            const finalY = centerY + Math.sin(angle) * finalRadius - (circleSize / 2);
-
-            circle.style.left = `${initialX}px`;
-            circle.style.top = `${initialY}px`;
-            circle.initialX = initialX;
-            circle.initialY = initialY;
-            circle.finalX = finalX;
-            circle.finalY = finalY;
-        }
-
-        circle.style.opacity = '0';
-        document.body.appendChild(circle);
-        activeCircles.push(circle);
-
-        requestAnimationFrame(() => {
-            circle.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            circle.style.left = `${circle.finalX}px`;
-            circle.style.top = `${circle.finalY}px`;
-            circle.style.opacity = '1';
-            circle.style.zIndex = '1000';
+            return circle;
         });
-    });
-});
+    }
 
-function closeCircles() {
-    activeCircles.forEach(circle => {
-        if (circle.className === 'mobile-spacer') {
-            circle.style.height = '0';
-        } else {
-            circle.style.left = `${circle.initialX}px`;
-            circle.style.top = `${circle.initialY}px`;
+    function close() {
+        const closing = circles;
+        circles = [];
+        for (const circle of closing) {
+            circle.style.left = circle.dataset.homeLeft;
+            circle.style.top = circle.dataset.homeTop;
             circle.style.opacity = '0';
             circle.style.zIndex = '0';
         }
-    });
-
-    setTimeout(() => {
-        activeCircles.forEach(circle => circle.remove());
-        activeCircles = [];
-    }, 300);
-}
-
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.background-img') &&
-        !e.target.closest('.flying-circle') &&
-        activeCircles.length > 0) {
-        closeCircles();
+        setTimeout(() => closing.forEach((c) => c.remove()), ANIMATION_MS);
     }
-}); 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const trigger = document.querySelector('.background-img');
+        if (!trigger) return;
+
+        trigger.addEventListener('click', () => {
+            if (window.innerWidth <= 768) return;
+            if (circles.length > 0) close();
+            else open(trigger);
+        });
+
+        document.addEventListener('scroll', () => {
+            if (circles.length > 0) close();
+        }, { passive: true });
+
+        document.addEventListener('pointerdown', (e) => {
+            if (circles.length > 0 &&
+                !e.target.closest('.flying-circle') &&
+                !e.target.closest('.background-img')) {
+                close();
+            }
+        });
+    });
+})();
