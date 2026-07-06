@@ -16,7 +16,7 @@ public sealed class ApiExceptionFilter : IExceptionFilter
     {
         LogUnhandled(_logger, context.ActionDescriptor.DisplayName, context.Exception);
 
-        context.Result = new JsonResult(new { success = false, message = context.Exception.Message })
+        context.Result = new JsonResult(new { success = false, message = "An unexpected error occurred." })
         {
             StatusCode = StatusCodes.Status500InternalServerError,
         };

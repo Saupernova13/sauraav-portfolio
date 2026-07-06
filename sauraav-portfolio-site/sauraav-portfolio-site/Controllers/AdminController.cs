@@ -12,7 +12,15 @@ namespace sauraav_portfolio_site.Controllers;
 [ServiceFilter(typeof(ApiExceptionFilter))]
 public sealed class AdminController : Controller
 {
+    private const long MaxVideoBytes = 100 * 1024 * 1024;
+
     private static readonly JsonSerializerOptions CaseInsensitiveOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private static readonly HashSet<string> DeletableSections =
+        new(StringComparer.OrdinalIgnoreCase) { "education", "experience", "projects", "qualifications", "skills" };
+
+    private static readonly HashSet<string> AllowedVideoExtensions =
+        new(StringComparer.OrdinalIgnoreCase) { ".mp4", ".webm", ".gif" };
 
     private readonly IFirebaseService _firebase;
 
@@ -20,122 +28,72 @@ public sealed class AdminController : Controller
 
     public IActionResult Index() => View();
 
-    // Summary
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveSummary([FromBody] SummaryModel summary)
     {
+        if (!ModelState.IsValid)
+            return ValidationFailure();
+
         await _firebase.SetData("summary", summary);
         return Json(new { success = true });
     }
 
-    // Education
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddEducation([FromBody] EducationModel education) =>
+        await SaveKeyedAsync("education", education.SchoolName, education);
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddEducation([FromBody] EducationModel education)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(education.SchoolName ?? string.Empty);
-        await _firebase.SetData($"education/{key}", education);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteEducation(string schoolName)
-    {
-        await _firebase.DeleteData($"education/{FirebaseKeySanitizer.Sanitize(schoolName)}");
-        return Json(new { success = true });
-    }
-
-    // Experience
+    public async Task<IActionResult> AddExperience([FromBody] WorkExperienceModel experience) =>
+        await SaveKeyedAsync("experience", experience.Title, experience);
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddExperience([FromBody] WorkExperienceModel experience)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(experience.Title ?? string.Empty);
-        await _firebase.SetData($"experience/{key}", experience);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteExperience(string title)
-    {
-        await _firebase.DeleteData($"experience/{FirebaseKeySanitizer.Sanitize(title)}");
-        return Json(new { success = true });
-    }
-
-    // Projects
+    public async Task<IActionResult> AddQualification([FromBody] QualificationModel qualification) =>
+        await SaveKeyedAsync("qualifications", qualification.QualificationName, qualification);
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddSkill([FromBody] SkillsModel skill) =>
+        await SaveKeyedAsync("skills", skill.SkillName, skill);
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequestSizeLimit(MaxVideoBytes + 1024 * 1024)]
     public async Task<IActionResult> AddProject([FromForm] IFormFile? video, [FromForm] string projectData)
     {
         var project = JsonSerializer.Deserialize<ProjectModel>(projectData, CaseInsensitiveOptions);
 
-        if (project is null)
+        if (project is null || !TryValidateModel(project))
             return Json(new { success = false, message = "Invalid project data" });
 
         if (video is not null)
-            project.DemoVideoPath = await SaveVideoAsync(video);
-
-        var key = FirebaseKeySanitizer.Sanitize(project.ProjectName ?? string.Empty);
-        await _firebase.SetData($"projects/{key}", new
         {
-            projectName = project.ProjectName,
-            description = project.Description,
-            projectLink = project.ProjectLink,
-            demoVideoPath = project.DemoVideoPath,
-        });
+            var extension = Path.GetExtension(video.FileName);
+            if (!AllowedVideoExtensions.Contains(extension))
+                return Json(new { success = false, message = "Only .mp4, .webm and .gif files are allowed" });
 
-        return Json(new { success = true });
+            if (video.Length > MaxVideoBytes)
+                return Json(new { success = false, message = "Video exceeds the 100 MB limit" });
+
+            project.DemoVideoPath = await SaveVideoAsync(video, extension);
+        }
+
+        return await SaveKeyedAsync("projects", project.ProjectName, project);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteProject(string projectName)
-    {
-        await _firebase.DeleteData($"projects/{FirebaseKeySanitizer.Sanitize(projectName)}");
-        return Json(new { success = true });
-    }
-
-    // Qualifications
-
-    [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddQualification([FromBody] QualificationModel qualification)
+    public async Task<IActionResult> Delete(string section, string key)
     {
-        var key = FirebaseKeySanitizer.Sanitize(qualification.QualificationName ?? string.Empty);
-        await _firebase.SetData($"qualifications/{key}", qualification);
+        if (string.IsNullOrWhiteSpace(key) || !DeletableSections.Contains(section))
+            return Json(new { success = false, message = "Unknown section or empty key" });
+
+        await _firebase.DeleteData($"{section.ToLowerInvariant()}/{FirebaseKeySanitizer.Sanitize(key)}");
         return Json(new { success = true });
     }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteQualification(string qualificationName)
-    {
-        await _firebase.DeleteData($"qualifications/{FirebaseKeySanitizer.Sanitize(qualificationName)}");
-        return Json(new { success = true });
-    }
-
-    // Skills
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddSkill([FromBody] SkillsModel skill)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(skill.SkillName ?? string.Empty);
-        await _firebase.SetData($"skills/{key}", skill);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteSkill(string skillName)
-    {
-        await _firebase.DeleteData($"skills/{FirebaseKeySanitizer.Sanitize(skillName)}");
-        return Json(new { success = true });
-    }
-
-    // Data
 
     [HttpGet]
     public async Task<IActionResult> GetAllData()
@@ -160,12 +118,32 @@ public sealed class AdminController : Controller
         });
     }
 
-    private static async Task<string> SaveVideoAsync(IFormFile video)
+    private async Task<IActionResult> SaveKeyedAsync<T>(string section, string? key, T data)
+    {
+        if (!ModelState.IsValid || string.IsNullOrWhiteSpace(key))
+            return ValidationFailure();
+
+        await _firebase.SetData($"{section}/{FirebaseKeySanitizer.Sanitize(key)}", data);
+        return Json(new { success = true });
+    }
+
+    private JsonResult ValidationFailure()
+    {
+        var errors = ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .DefaultIfEmpty("Invalid data")
+            .First();
+
+        return Json(new { success = false, message = errors });
+    }
+
+    private static async Task<string> SaveVideoAsync(IFormFile video, string extension)
     {
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
         Directory.CreateDirectory(uploadsFolder);
 
-        var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(video.FileName)}";
+        var uniqueFileName = $"{Guid.NewGuid()}{extension.ToLowerInvariant()}";
         var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
         await using var stream = new FileStream(filePath, FileMode.Create);

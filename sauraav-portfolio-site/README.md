@@ -18,12 +18,25 @@ cd sauraav-portfolio-site
 dotnet user-secrets init
 dotnet user-secrets set "Firebase:DatabaseUrl" "https://<your-project>.firebasedatabase.app/"
 dotnet user-secrets set "Admin:Username" "admin"
-dotnet user-secrets set "Admin:Password" "<strong-password>"
+dotnet run -- hash-password "<strong-password>"   # prints a PBKDF2 hash
+dotnet user-secrets set "Admin:PasswordHash" "<printed-hash>"
 ```
+
+`Admin:Password` (plaintext) is still accepted as a fallback but logs a warning at
+startup; prefer `Admin:PasswordHash`.
 
 ### Production
 
 Set the same keys as environment variables (prefixed with `Firebase__` / `Admin__` per .NET convention) or via your hosting provider's secret store.
+
+### Security
+
+- Admin password verified with PBKDF2-SHA256 (600k iterations) in constant time
+- Login endpoint rate-limited to 5 attempts per minute per IP
+- Auth cookie: `HttpOnly`, `Secure`, `SameSite=Strict`, 8h sliding expiration
+- All mutating admin endpoints require an antiforgery token (incl. deletes)
+- Video uploads restricted to `.mp4`/`.webm`/`.gif`, 100 MB cap, stored under a random name
+- Content-Security-Policy, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy` headers on every response
 
 ## Running locally
 

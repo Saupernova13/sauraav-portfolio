@@ -1,17 +1,29 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using sauraav_portfolio_site.Models;
+using sauraav_portfolio_site.Services;
 
 namespace sauraav_portfolio_site.Controllers;
 
 public sealed class AccountController : Controller
 {
-    private readonly AdminOptions _adminOptions;
+    private static readonly Action<ILogger, string, Exception?> LogFailedLogin =
+        LoggerMessage.Define<string>(LogLevel.Warning, new EventId(1, "FailedLogin"), "Failed admin login attempt from {RemoteIp}");
 
-    public AccountController(IOptions<AdminOptions> options) => _adminOptions = options.Value;
+    private readonly AdminOptions _adminOptions;
+    private readonly ILogger<AccountController> _logger;
+
+    public AccountController(IOptions<AdminOptions> options, ILogger<AccountController> logger)
+    {
+        _adminOptions = options.Value;
+        _logger = logger;
+    }
 
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
@@ -22,13 +34,17 @@ public sealed class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
+        ViewData["ReturnUrl"] = returnUrl;
+
         if (!ModelState.IsValid)
             return View(model);
 
-        if (model.Username != _adminOptions.Username || model.Password != _adminOptions.Password)
+        if (!CredentialsValid(model))
         {
+            LogFailedLogin(_logger, HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown", null);
             ModelState.AddModelError(string.Empty, "Invalid credentials.");
             return View(model);
         }
@@ -40,7 +56,7 @@ public sealed class AccountController : Controller
         if (Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Admin");
     }
 
     [HttpPost]
@@ -50,4 +66,18 @@ public sealed class AccountController : Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
+
+    private bool CredentialsValid(LoginViewModel model)
+    {
+        var usernameMatches = FixedTimeEquals(model.Username, _adminOptions.Username);
+
+        var passwordMatches = string.IsNullOrEmpty(_adminOptions.PasswordHash)
+            ? FixedTimeEquals(model.Password, _adminOptions.Password)
+            : PasswordHasher.Verify(model.Password, _adminOptions.PasswordHash);
+
+        return usernameMatches && passwordMatches;
+    }
+
+    private static bool FixedTimeEquals(string a, string b) =>
+        CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(a), Encoding.UTF8.GetBytes(b));
 }
