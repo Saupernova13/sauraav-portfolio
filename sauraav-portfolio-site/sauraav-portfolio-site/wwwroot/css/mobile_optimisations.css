@@ -76,7 +76,7 @@ section {
         transform: translateX(-50%) translateY(-5px);
         animation: none;
         border-color: #ff9900;
-        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 50px rgba(255, 166, 0, 0.4);
+        
     }
 
     .scroll-button i {
@@ -110,7 +110,6 @@ section {
     .social-icon-mobile:hover {
         background: rgba(255, 255, 255, 0.3);
         transform: scale(1.1);
-        box-shadow: 0 0 20px rgba(82, 140, 223, 0.5);
     }
 
     .social-icon-mobile img {

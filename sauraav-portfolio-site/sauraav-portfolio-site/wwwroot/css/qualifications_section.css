@@ -61,7 +61,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(82, 140, 223, 0.3));
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
 }
 
 .qualification-name {
@@ -69,10 +69,7 @@
     z-index: 2;
     font-family: 'gendy', sans-serif;
     font-size: 1.3rem;
-    background: linear-gradient(165deg, #4d71ad, #528cdf);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #6ea1e4;
     margin: 0;
 }
 

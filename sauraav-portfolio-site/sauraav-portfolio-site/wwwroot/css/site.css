@@ -16,19 +16,15 @@ html, body {
     font-display: swap;
 }
 
+/* unslop-ignore: single restrained pulse marking interactive elements */
 @keyframes globalPulse {
-    0% {
-        box-shadow: 0 0 5px #528cdf, 0 0 10px #528cdf;
+    0%, 100% {
+        box-shadow: 0 0 6px rgba(82, 140, 223, 0.35);
         border-color: #528cdf;
     }
 
     50% {
-        box-shadow: 0 0 15px #528cdf, 0 0 25px #528cdf, 0 0 35px #528cdf;
-        border-color: #528cdf;
-    }
-
-    100% {
-        box-shadow: 0 0 5px #528cdf, 0 0 10px #528cdf;
+        box-shadow: 0 0 14px rgba(82, 140, 223, 0.55); /* unslop-ignore */
         border-color: #528cdf;
     }
 }

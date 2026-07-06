@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sauraav Jayrajh - Portfolio</title>
   <link rel="icon" type="image/x-icon" href="~/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/stars_bg.css" asp-append-version="true" />
@@ -100,7 +100,7 @@
         {
           foreach (var edu in Model.Education.Values.OrderByDescending(e => e.EndDate))
           {
-            <div class="education-card" data-aos="fade-up">
+            <div class="education-card">
               <div class="education-content">
                 <div class="education-header">
                   <h3 class="institution-name">@edu.SchoolName</h3>
@@ -162,7 +162,6 @@
         }
       </div>
     </div>
-    <br /><br /><br /><br /><br />
     <button class="scroll-button cyber-button" data-scroll-target="section5" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
@@ -199,7 +198,6 @@
         </div>
       </div>
     </div>
-    <br /><br /><br /><br /><br />
     <button class="scroll-button cyber-button" data-scroll-target="section6" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>
@@ -264,7 +262,6 @@
         }
       </div>
     </div>
-    <br /><br /><br />
     <button class="scroll-button cyber-button" data-scroll-target="section8" aria-label="Scroll to next section">
       <i class="fas fa-chevron-down"></i>
     </button>

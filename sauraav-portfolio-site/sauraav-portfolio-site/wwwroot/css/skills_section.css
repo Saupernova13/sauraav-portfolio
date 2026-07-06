@@ -51,10 +51,7 @@
 .skill-name {
     font-family: 'gendy', sans-serif;
     font-size: 1.3rem;
-    background: linear-gradient(165deg, #4d71ad, #528cdf);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #6ea1e4;
     margin-bottom: 1rem;
 }
 
@@ -95,7 +92,7 @@
     }
 
 .skill-level-text {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     min-width: 45px;

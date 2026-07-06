@@ -35,7 +35,6 @@
     border-radius: 50%;
     position: relative;
     z-index: 2;
-    box-shadow: 0 0 15px rgba(82, 140, 223, 0.3);
     transition: all 0.3s ease;
 }
 
@@ -87,15 +86,12 @@
 .experience-title {
     font-family: 'gendy', sans-serif;
     font-size: 1.5rem;
-    background: linear-gradient(165deg, #4d71ad, #528cdf);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #6ea1e4;
     margin: 0;
 }
 
 .experience-date {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
 }
@@ -104,7 +100,7 @@
     position: relative;
     z-index: 2;
     display: block;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
     color: rgba(255, 255, 255, 0.6);
     margin-bottom: 1rem;
 }
@@ -122,7 +118,7 @@
 }
 
     .accomplishments-list li {
-        font-family: 'Roboto', sans-serif;
+        font-family: 'IBM Plex Sans', sans-serif;
         color: rgba(255, 255, 255, 0.8);
         margin-bottom: 0.8rem;
         padding-left: 1.5rem;
@@ -139,7 +135,6 @@
 /* Hover Effects */
 .experience-item:hover .marker-dot {
     transform: scale(1.2);
-    box-shadow: 0 0 20px rgba(82, 140, 223, 0.5);
 }
 
 .experience-item:hover .experience-content {
@@ -240,7 +235,6 @@
 
         .experience-item.touch-active .marker-dot {
             transform: scale(1.2);
-            box-shadow: 0 0 20px rgba(82, 140, 223, 0.5);
         }
     }
 }
