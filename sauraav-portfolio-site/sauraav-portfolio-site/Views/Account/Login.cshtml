@@ -3,29 +3,29 @@
     ViewData["Title"] = "Admin Login";
 }
 
-<div class="container mt-5" style="max-width:400px">
-  <h2 class="mb-4">Admin Login</h2>
-
-  <form asp-action="Login" method="post">
-    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-    <div class="mb-3">
-      <label asp-for="Username" class="form-label"></label>
-      <input asp-for="Username" class="form-control" autocomplete="username" />
-      <span asp-validation-for="Username" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-      <label asp-for="Password" class="form-label"></label>
-      <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
-      <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Login</button>
-  </form>
-</div>
-
-@section Scripts {
-  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Styles {
+  <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 }
+
+<div class="login-wrap">
+  <div class="login-card">
+    <p class="admin-brand">sauraav<span>/admin</span></p>
+
+    <form asp-action="Login" method="post">
+      <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+      <div asp-validation-summary="ModelOnly" class="login-error"></div>
+
+      <label class="field">
+        <span class="field-label">Username</span>
+        <input asp-for="Username" type="text" autocomplete="username" autofocus />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Password</span>
+        <input asp-for="Password" type="password" autocomplete="current-password" />
+      </label>
+
+      <button type="submit" class="btn btn-primary">Log in</button>
+    </form>
+  </div>
+</div>

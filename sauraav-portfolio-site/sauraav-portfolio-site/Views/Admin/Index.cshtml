@@ -4,284 +4,273 @@
   ViewData["Title"] = "Admin";
 }
 
+@section Styles {
+  <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+}
+
 <meta name="__RequestVerificationToken" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken">
 
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Portfolio Admin</h3>
-    <form asp-controller="Account" asp-action="Logout" method="post">
-      <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
-    </form>
-  </div>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <p class="admin-brand">sauraav<span>/admin</span></p>
+    <nav class="admin-nav" aria-label="Content sections">
+      <button type="button" class="admin-nav-item is-active" data-panel="summary">Summary</button>
+      <button type="button" class="admin-nav-item" data-panel="education">Education</button>
+      <button type="button" class="admin-nav-item" data-panel="experience">Experience</button>
+      <button type="button" class="admin-nav-item" data-panel="projects">Projects</button>
+      <button type="button" class="admin-nav-item" data-panel="qualifications">Qualifications</button>
+      <button type="button" class="admin-nav-item" data-panel="skills">Skills</button>
+    </nav>
+    <div class="admin-sidebar-foot">
+      <a href="/" class="admin-link">View site</a>
+      <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit" class="btn btn-ghost">Log out</button>
+      </form>
+    </div>
+  </aside>
 
-  <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">Summary</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">Education</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">Experience</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">Projects</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications" type="button" role="tab">Qualifications</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab">Skills</button>
-    </li>
-  </ul>
-
-  <div class="tab-content" id="adminTabContent">
+  <main class="admin-main">
 
     <!-- Summary -->
-    <div class="tab-pane fade show active" id="summary" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Summary</h5>
-          <form id="summaryForm">
-            <div class="form-group">
-              <textarea class="form-control" rows="5" id="summaryText" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">Save Summary</button>
-          </form>
+    <section class="admin-panel is-active" id="panel-summary">
+      <header class="panel-head">
+        <h1>Summary</h1>
+        <p>The “About Me” paragraph on the home page. Blank lines split paragraphs.</p>
+      </header>
+      <form id="summaryForm" class="panel-card" data-section="summary">
+        <label class="field">
+          <span class="field-label">Summary text</span>
+          <textarea name="summary" rows="8" required></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save summary</button>
         </div>
-      </div>
-    </div>
+      </form>
+    </section>
 
     <!-- Education -->
-    <div class="tab-pane fade" id="education" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Education</h5>
-          <form id="educationForm">
-            <input type="hidden" id="eduIsEdit" value="false">
-            <input type="hidden" id="eduOriginalSchool" value="">
-            <div class="form-group">
-              <label>School Name</label>
-              <input type="text" class="form-control" id="schoolName" required>
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control" id="educationDescription"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" class="form-control" id="location">
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="hasStartDate">
-                  <label class="custom-control-label" for="hasStartDate">Has Start Date</label>
-                </div>
-                <input type="date" class="form-control" id="eduStartDate" disabled>
-              </div>
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="hasEndDate">
-                  <label class="custom-control-label" for="hasEndDate">Has End Date</label>
-                </div>
-                <input type="date" class="form-control" id="eduEndDate" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="eduImage" accept="image/*">
-              <img id="eduImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Education image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Education</button>
-            <button type="button" class="btn btn-secondary" id="eduClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Education</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>School</th><th>Location</th><th>Duration</th><th>Actions</th></tr></thead>
-                <tbody id="educationList"></tbody>
-              </table>
-            </div>
+    <section class="admin-panel" id="panel-education">
+      <header class="panel-head">
+        <h1>Education</h1>
+        <p>Entries are keyed by school name; saving an existing name overwrites it.</p>
+      </header>
+      <form id="educationForm" class="panel-card" data-section="education">
+        <div class="field-grid">
+          <label class="field">
+            <span class="field-label">School name</span>
+            <input type="text" name="schoolName" data-key required>
+          </label>
+          <label class="field">
+            <span class="field-label">Location</span>
+            <input type="text" name="location">
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Description</span>
+          <textarea name="description" rows="3"></textarea>
+        </label>
+        <div class="field-grid">
+          <div class="field">
+            <label class="field-toggle">
+              <input type="checkbox" data-toggles="eduStartDate"> <span>Start date</span>
+            </label>
+            <input type="date" name="startDate" id="eduStartDate" disabled>
+          </div>
+          <div class="field">
+            <label class="field-toggle">
+              <input type="checkbox" data-toggles="eduEndDate"> <span>End date</span>
+            </label>
+            <input type="date" name="endDate" id="eduEndDate" disabled>
           </div>
         </div>
+        <div class="field">
+          <span class="field-label">Image</span>
+          <input type="file" data-image="imageBase64" accept="image/*">
+          <img class="image-preview" data-preview alt="" hidden>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+      <div class="panel-card">
+        <h2 class="card-title">Existing entries</h2>
+        <table class="data-table" data-table="education">
+          <thead><tr><th>School</th><th>Location</th><th>Duration</th><th class="col-actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
     <!-- Experience -->
-    <div class="tab-pane fade" id="experience" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Experience</h5>
-          <form id="experienceForm">
-            <input type="hidden" id="expIsEdit" value="false">
-            <input type="hidden" id="expOriginalTitle" value="">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control" id="expTitle" required>
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" class="form-control" id="expLocation">
-            </div>
-            <div class="form-group">
-              <label>Accomplishments</label>
-              <div id="accomplishmentsList"></div>
-              <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="addAccomplishment('')">Add Accomplishment</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="expHasStartDate">
-                  <label class="custom-control-label" for="expHasStartDate">Has Start Date</label>
-                </div>
-                <input type="date" class="form-control" id="expStartDate" disabled>
-              </div>
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="expHasEndDate">
-                  <label class="custom-control-label" for="expHasEndDate">Has End Date</label>
-                </div>
-                <input type="date" class="form-control" id="expEndDate" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="expImage" accept="image/*">
-              <img id="expImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Experience image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Experience</button>
-            <button type="button" class="btn btn-secondary" id="expClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Experience</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Title</th><th>Location</th><th>Duration</th><th>Actions</th></tr></thead>
-                <tbody id="experienceList"></tbody>
-              </table>
-            </div>
+    <section class="admin-panel" id="panel-experience">
+      <header class="panel-head">
+        <h1>Experience</h1>
+        <p>Entries are keyed by title; saving an existing title overwrites it.</p>
+      </header>
+      <form id="experienceForm" class="panel-card" data-section="experience">
+        <div class="field-grid">
+          <label class="field">
+            <span class="field-label">Title</span>
+            <input type="text" name="title" data-key required>
+          </label>
+          <label class="field">
+            <span class="field-label">Location</span>
+            <input type="text" name="location">
+          </label>
+        </div>
+        <div class="field">
+          <span class="field-label">Accomplishments</span>
+          <div data-list="accomplishments" class="repeat-list"></div>
+          <button type="button" class="btn btn-ghost btn-sm" data-list-add="accomplishments">Add line</button>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label class="field-toggle">
+              <input type="checkbox" data-toggles="expStartDate"> <span>Start date</span>
+            </label>
+            <input type="date" name="startDate" id="expStartDate" disabled>
+          </div>
+          <div class="field">
+            <label class="field-toggle">
+              <input type="checkbox" data-toggles="expEndDate"> <span>End date</span>
+            </label>
+            <input type="date" name="endDate" id="expEndDate" disabled>
           </div>
         </div>
+        <div class="field">
+          <span class="field-label">Image</span>
+          <input type="file" data-image="imageBase64" accept="image/*">
+          <img class="image-preview" data-preview alt="" hidden>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+      <div class="panel-card">
+        <h2 class="card-title">Existing entries</h2>
+        <table class="data-table" data-table="experience">
+          <thead><tr><th>Title</th><th>Location</th><th>Duration</th><th class="col-actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
     <!-- Projects -->
-    <div class="tab-pane fade" id="projects" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Project</h5>
-          <form id="projectForm">
-            <input type="hidden" id="projIsEdit" value="false">
-            <input type="hidden" id="projOriginalName" value="">
-            <div class="form-group">
-              <label>Project Name</label>
-              <input type="text" class="form-control" id="projectName" required>
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control" id="projectDescription"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Project Link</label>
-              <input type="url" class="form-control" id="projectLink">
-            </div>
-            <div class="form-group">
-              <label>Demo Video</label>
-              <input type="file" class="form-control-file" id="projectVideo" accept="video/*">
-              <video id="projectVideoPreview" class="mt-2" style="max-width:200px;display:none;" controls></video>
-            </div>
-            <button type="submit" class="btn btn-primary">Save Project</button>
-            <button type="button" class="btn btn-secondary" id="projClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Projects</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Name</th><th>Link</th><th>Demo</th><th>Actions</th></tr></thead>
-                <tbody id="projectsList"></tbody>
-              </table>
-            </div>
-          </div>
+    <section class="admin-panel" id="panel-projects">
+      <header class="panel-head">
+        <h1>Projects</h1>
+        <p>Demo videos accept .mp4, .webm or .gif up to 100 MB.</p>
+      </header>
+      <form id="projectForm" class="panel-card" data-section="projects">
+        <div class="field-grid">
+          <label class="field">
+            <span class="field-label">Project name</span>
+            <input type="text" name="projectName" data-key required>
+          </label>
+          <label class="field">
+            <span class="field-label">Project link</span>
+            <input type="url" name="projectLink">
+          </label>
         </div>
+        <label class="field">
+          <span class="field-label">Description</span>
+          <textarea name="description" rows="3"></textarea>
+        </label>
+        <div class="field">
+          <span class="field-label">Demo video</span>
+          <input type="file" data-video accept="video/mp4,video/webm,image/gif">
+          <video class="image-preview" data-preview controls hidden></video>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+      <div class="panel-card">
+        <h2 class="card-title">Existing entries</h2>
+        <table class="data-table" data-table="projects">
+          <thead><tr><th>Name</th><th>Link</th><th>Demo</th><th class="col-actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
     <!-- Qualifications -->
-    <div class="tab-pane fade" id="qualifications" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Qualification</h5>
-          <form id="qualificationForm">
-            <input type="hidden" id="qualIsEdit" value="false">
-            <input type="hidden" id="qualOriginalName" value="">
-            <div class="form-group">
-              <label>Qualification Name</label>
-              <input type="text" class="form-control" id="qualificationName" required>
-            </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="qualificationImage" accept="image/*">
-              <img id="qualImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Qualification image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Qualification</button>
-            <button type="button" class="btn btn-secondary" id="qualClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Qualifications</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Qualification</th><th>Actions</th></tr></thead>
-                <tbody id="qualificationsList"></tbody>
-              </table>
-            </div>
-          </div>
+    <section class="admin-panel" id="panel-qualifications">
+      <header class="panel-head">
+        <h1>Qualifications</h1>
+        <p>Certificates and awards shown in the qualifications grid.</p>
+      </header>
+      <form id="qualificationForm" class="panel-card" data-section="qualifications">
+        <label class="field">
+          <span class="field-label">Qualification name</span>
+          <input type="text" name="qualificationName" data-key required>
+        </label>
+        <div class="field">
+          <span class="field-label">Image</span>
+          <input type="file" data-image="imageBase64" accept="image/*">
+          <img class="image-preview" data-preview alt="" hidden>
         </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+      <div class="panel-card">
+        <h2 class="card-title">Existing entries</h2>
+        <table class="data-table" data-table="qualifications">
+          <thead><tr><th>Qualification</th><th class="col-actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
     <!-- Skills -->
-    <div class="tab-pane fade" id="skills" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Skill</h5>
-          <form id="skillForm">
-            <input type="hidden" id="skillIsEdit" value="false">
-            <input type="hidden" id="skillOriginalName" value="">
-            <div class="form-group">
-              <label>Skill Name</label>
-              <input type="text" class="form-control" id="skillName" required>
-            </div>
-            <div class="form-group">
-              <label>Skill Level (1-10): <span id="skillLevelValue">5</span></label>
-              <input type="range" class="form-control-range" id="skillLevel" min="1" max="10" value="5">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Skill</button>
-            <button type="button" class="btn btn-secondary" id="skillClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Skills</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Skill</th><th>Level</th><th>Actions</th></tr></thead>
-                <tbody id="skillsList"></tbody>
-              </table>
-            </div>
-          </div>
+    <section class="admin-panel" id="panel-skills">
+      <header class="panel-head">
+        <h1>Skills</h1>
+        <p>Skill level is shown as a 1–10 bar on the home page.</p>
+      </header>
+      <form id="skillForm" class="panel-card" data-section="skills">
+        <div class="field-grid">
+          <label class="field">
+            <span class="field-label">Skill name</span>
+            <input type="text" name="skillName" data-key required>
+          </label>
+          <label class="field">
+            <span class="field-label">Level: <output data-range-output>5</output>/10</span>
+            <input type="range" name="skillLevel" min="1" max="10" value="5" data-range>
+          </label>
         </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+      <div class="panel-card">
+        <h2 class="card-title">Existing entries</h2>
+        <table class="data-table" data-table="skills">
+          <thead><tr><th>Skill</th><th>Level</th><th class="col-actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
-  </div>
+  </main>
 </div>
 
+<dialog id="confirmDialog" class="admin-dialog">
+  <p id="confirmMessage">Delete this entry?</p>
+  <div class="form-actions">
+    <button type="button" class="btn btn-danger" id="confirmYes">Delete</button>
+    <button type="button" class="btn btn-ghost" id="confirmNo">Cancel</button>
+  </div>
+</dialog>
+
+<div id="statusToast" class="admin-toast" role="status" aria-live="polite" hidden></div>
+
 @section Scripts {
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="~/js/admin/admin.js" asp-append-version="true"></script>
 }
