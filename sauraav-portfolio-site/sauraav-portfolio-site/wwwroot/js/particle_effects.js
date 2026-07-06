@@ -1,76 +1,80 @@
-﻿class ParticleSystem {
-    constructor() {
-        this.particles = [];
-        this.canvas = document.createElement('canvas');
-        this.ctx = this.canvas.getContext('2d');
+// Click burst particles for .cyber-button elements.
+// The canvas is created on first use and the animation loop stops when no
+// particles are alive, so idle pages do no per-frame work.
+(() => {
+    'use strict';
 
-        this.canvas.style.position = 'fixed';
-        this.canvas.style.top = '0';
-        this.canvas.style.left = '0';
-        this.canvas.style.pointerEvents = 'none';
-        this.canvas.style.zIndex = '9998';
+    const PARTICLES_PER_BURST = 30;
+    const COLORS = ['#46c8ff', '#ff9900'];
+    const FADE_PER_FRAME = 0.02;
 
-        document.body.appendChild(this.canvas);
+    let canvas = null;
+    let ctx = null;
+    let particles = [];
+    let rafId = null;
 
-        this.resizeCanvas();
-        window.addEventListener('resize', () => this.resizeCanvas());
-
-        // Add click listener to cyber buttons
-        document.querySelectorAll('.cyber-button').forEach(button => {
-            button.addEventListener('click', (e) => this.createParticleExplosion(e.clientX, e.clientY));
-        });
-
-        this.animate();
+    function ensureCanvas() {
+        if (canvas) return;
+        canvas = document.createElement('canvas');
+        canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:9998';
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext('2d');
+        resize();
+        window.addEventListener('resize', resize);
     }
 
-    resizeCanvas() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
 
-    createParticle(x, y) {
-        return {
-            x,
-            y,
-            vx: (Math.random() - 0.5) * 8,
-            vy: (Math.random() - 0.5) * 8,
-            life: 1,
-            color: Math.random() < 0.5 ? '#46c8ff' : '#ff9900',
-            size: Math.random() * 3 + 1
-        };
-    }
+    function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    createParticleExplosion(x, y) {
-        for (let i = 0; i < 30; i++) {
-            this.particles.push(this.createParticle(x, y));
-        }
-    }
-
-    animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        for (let i = this.particles.length - 1; i >= 0; i--) {
-            const p = this.particles[i];
-
+        let alive = 0;
+        for (const p of particles) {
             p.x += p.vx;
             p.y += p.vy;
-            p.life -= 0.02;
+            p.life -= FADE_PER_FRAME;
+            if (p.life <= 0) continue;
 
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            this.ctx.fillStyle = p.color + Math.floor(p.life * 255).toString(16).padStart(2, '0');
-            this.ctx.fill();
-
-            if (p.life <= 0) {
-                this.particles.splice(i, 1);
-            }
+            particles[alive++] = p;
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
         }
+        particles.length = alive;
+        ctx.globalAlpha = 1;
 
-        requestAnimationFrame(() => this.animate());
+        if (alive > 0) {
+            rafId = requestAnimationFrame(frame);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            rafId = null;
+        }
     }
-}
 
-// Initialize particle system
-document.addEventListener('DOMContentLoaded', () => {
-    new ParticleSystem();
-});
+    function burst(x, y) {
+        ensureCanvas();
+        for (let i = 0; i < PARTICLES_PER_BURST; i++) {
+            particles.push({
+                x,
+                y,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                life: 1,
+                color: COLORS[Math.random() < 0.5 ? 0 : 1],
+                size: Math.random() * 3 + 1,
+            });
+        }
+        if (rafId === null) rafId = requestAnimationFrame(frame);
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.cyber-button')) burst(e.clientX, e.clientY);
+    });
+})();
