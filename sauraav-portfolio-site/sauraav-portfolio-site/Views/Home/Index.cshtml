@@ -1,147 +1,147 @@
 @using sauraav_portfolio_site.Helpers
 @model sauraav_portfolio_site.Models.PortfolioViewModel
 @{
-    Layout = null;
+  Layout = null;
+  var sectionIndex = 1;
+  string Next() => $"section{++sectionIndex}";
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio of Sauraav Jayrajh: software developer, designer and problem solver.">
+  <meta name="theme-color" content="#121212">
   <title>Sauraav Jayrajh - Portfolio</title>
   <link rel="icon" type="image/x-icon" href="~/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/stars_bg.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/dynamic_typed.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/parallax_and_fly_out.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/mobile_optimisations.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/experience_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/projects_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/qualifications_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/education_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/summary_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/skills_section.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/section_styles.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/tech_stack_section.css" asp-append-version="true" />
+  <link rel="preload" href="~/fonts/Gendy.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="~/css/portfolio.css" asp-append-version="true" />
 </head>
-<body class="hide-header">
-  <div class="neon-line"></div>
-  <div class="hover-area"></div>
-  <div class="starfield-container" id="myStarfield"></div>
+<body>
+  <svg hidden aria-hidden="true" focusable="false">
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path fill="currentColor" d="M12 15.5 4.5 8l1.4-1.4L12 12.7l6.1-6.1L19.5 8z"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></symbol>
+  </svg>
+
+  <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
 
   <!-- Section 1: Introduction -->
-  <section id="section1">
+  <section id="section1" class="hero-section">
     <div class="main-container cyber-button">
       <div class="text-content">
         <h1 class="welcome-message">Welcome! Greetings!</h1>
-        <div class="name-text">My name is Sauraav Jayrajh.</div>
-        <div class="typing-container">I'm <span class="typing-text"></span></div>
+        <p class="name-text">My name is Sauraav Jayrajh.</p>
+        <p class="typing-container">I'm <span class="typing-text" aria-live="off"></span></p>
       </div>
       <div class="profile-container">
         <div class="parallax-wrapper">
-          <img src="~/images/PFP_No_Me.png" alt="Background" class="profile-pic background-img">
-          <img src="~/images/PFP_With_Me.png" alt="Profile Picture" class="profile-pic foreground-img">
+          <picture>
+            <source srcset="~/images/PFP_No_Me.webp" type="image/webp">
+            <img src="~/images/PFP_No_Me.png" alt="" class="profile-pic background-img" width="720" height="720" decoding="async">
+          </picture>
+          <picture>
+            <source srcset="~/images/PFP_With_Me.webp" type="image/webp">
+            <img src="~/images/PFP_With_Me.png" alt="Portrait of Sauraav Jayrajh" class="profile-pic foreground-img" width="720" height="720" fetchpriority="high" decoding="async">
+          </picture>
         </div>
-        <div class="social-icons-mobile">
-          <a href="https://github.com/Saupernova13" class="social-icon-mobile" target="_blank" rel="noopener noreferrer">
-            <img src="~/images/github.png" alt="GitHub">
+        <nav class="social-icons-mobile" aria-label="Social links">
+          <a href="https://github.com/Saupernova13" class="social-icon-mobile" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <img src="~/images/github.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
           </a>
-          <a href="https://www.linkedin.com/in/sauraavjayrajh/" class="social-icon-mobile" target="_blank" rel="noopener noreferrer">
-            <img src="~/images/linkedin.png" alt="LinkedIn">
+          <a href="https://www.linkedin.com/in/sauraavjayrajh/" class="social-icon-mobile" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <img src="~/images/linkedin.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
           </a>
-          <a href="mailto:sauraavjayrajh@gmail.com" class="social-icon-mobile" target="_blank" rel="noopener noreferrer">
-            <img src="~/images/email.png" alt="Email">
+          <a href="mailto:sauraavjayrajh@gmail.com" class="social-icon-mobile" aria-label="Email">
+            <img src="~/images/email.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
           </a>
-          <a href="https://stardustsoftware.carrd.co/" class="social-icon-mobile" target="_blank" rel="noopener noreferrer">
-            <img src="~/images/stardust.png" alt="Stardust Software">
+          <a href="https://stardustsoftware.carrd.co/" class="social-icon-mobile" target="_blank" rel="noopener noreferrer" aria-label="Stardust Software">
+            <img src="~/images/stardust.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
           </a>
-          <a href="https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing" class="social-icon-mobile" target="_blank" rel="noopener noreferrer">
-            <img src="~/images/cv.png" alt="CV">
+          <a href="https://drive.google.com/file/d/1duN5lgNshz1Bo1516R6vCmaBTVu5IonO/view?usp=sharing" class="social-icon-mobile" target="_blank" rel="noopener noreferrer" aria-label="CV">
+            <img src="~/images/cv.webp" alt="" width="240" height="232" loading="lazy" decoding="async">
           </a>
-        </div>
+        </nav>
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section2')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to About Me">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 2: Summary -->
   <section id="section2" class="portfolio-section">
     <div class="section-content">
-      <h2 class="section-title">About Me</h2>
+      <h2 class="section-title reveal">About Me</h2>
       <div class="summary-container">
         @if (!string.IsNullOrEmpty(Model.Summary?.Summary))
         {
-          <div class="summary-content">
-            <div class="summary-hover-effect"></div>
+          <div class="summary-content card-lit reveal">
             <div class="summary-text">
-              @foreach (var paragraph in Model.Summary.Summary.Split('\n'))
+              @foreach (var paragraph in Model.Summary.Summary.Split('\n', StringSplitOptions.RemoveEmptyEntries))
               {
                 <p>@paragraph</p>
               }
             </div>
-            <div class="summary-decoration"><div class="code-lines"></div></div>
+            <div class="summary-decoration" aria-hidden="true"><div class="code-lines"></div></div>
           </div>
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section3')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Education">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 3: Education -->
-  <section id="section3" class="portfolio-section">
+  <section id="section3" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Education</h2>
+      <h2 class="section-title reveal">Education</h2>
       <div class="education-grid">
-        @if (Model.Education != null)
+        @if (Model.Education is not null)
         {
           foreach (var edu in Model.Education.Values.OrderByDescending(e => e.EndDate))
           {
-            <div class="education-card" data-aos="fade-up">
-              <div class="education-content">
+            <article class="education-card reveal">
+              <div class="education-content card-lit">
                 <div class="education-header">
                   <h3 class="institution-name">@edu.SchoolName</h3>
                   <span class="education-period">@ViewHelpers.FormatDateRange(edu.StartDate, edu.EndDate)</span>
                 </div>
                 <div class="education-details">
-                  <span class="education-location">
-                    <i class="fas fa-map-marker-alt"></i> @edu.Location
-                  </span>
+                  @if (!string.IsNullOrWhiteSpace(edu.Location))
+                  {
+                    <span class="education-location">
+                      <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> @edu.Location
+                    </span>
+                  }
                   <p class="education-description">@edu.Description</p>
                 </div>
-                <div class="education-hover-effect"></div>
               </div>
-            </div>
+            </article>
           }
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section4')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Experience">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 4: Experience -->
-  <section id="section4" class="portfolio-section">
+  <section id="section4" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Experience</h2>
+      <h2 class="section-title reveal">Experience</h2>
       <div class="experience-timeline">
-        @if (Model.Experience != null)
+        @if (Model.Experience is not null)
         {
           foreach (var exp in Model.Experience.Values.OrderByDescending(e => e.EndDate))
           {
-            <div class="experience-item">
-              <div class="experience-marker">
+            <article class="experience-item reveal">
+              <div class="experience-marker" aria-hidden="true">
                 <div class="marker-dot"></div>
                 <div class="marker-line"></div>
               </div>
-              <div class="experience-content">
-                <div class="experience-hover-effect"></div>
+              <div class="experience-content card-lit">
                 <div class="experience-header">
                   <h3 class="experience-title">@exp.Title</h3>
                   <span class="experience-date">@ViewHelpers.FormatDateRange(exp.StartDate, exp.EndDate)</span>
@@ -159,166 +159,142 @@
                   </div>
                 }
               </div>
-            </div>
+            </article>
           }
         }
       </div>
     </div>
-    <br /><br /><br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section5')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Projects">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 5: Projects -->
-  <section id="section5" class="portfolio-section">
+  <section id="section5" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Projects</h2>
+      <h2 class="section-title reveal">Projects</h2>
       <div class="projects-container">
         <div class="project-preview">
           <div class="preview-content">
-            <img class="project-gif" src="" alt="Project Preview">
+            <img class="project-media project-image" alt="" hidden decoding="async">
+            <video class="project-media project-video" muted loop playsinline preload="none" hidden></video>
             <div class="project-overlay">
               <p class="project-description"></p>
             </div>
           </div>
         </div>
-        <div class="projects-list">
-          @if (Model.Projects != null)
+        <div class="projects-list" role="list">
+          @if (Model.Projects is not null)
           {
             foreach (var project in Model.Projects.Values)
             {
-              <div class="project-item"
-                   data-gif="@project.DemoVideoPath"
+              <div class="project-item" role="listitem" tabindex="0"
+                   data-media="@project.DemoVideoPath"
                    data-description="@project.Description">
                 <div class="project-name">@project.ProjectName</div>
-                <a href="@project.ProjectLink" class="visit-button" target="_blank" rel="noopener noreferrer">
-                  Visit Project
-                </a>
+                @if (!string.IsNullOrWhiteSpace(project.ProjectLink))
+                {
+                  <a href="@project.ProjectLink" class="visit-button" target="_blank" rel="noopener noreferrer">
+                    Visit Project
+                  </a>
+                }
               </div>
             }
           }
         </div>
       </div>
     </div>
-    <br /><br /><br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section6')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Qualifications">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 6: Qualifications -->
-  <section id="section6" class="portfolio-section">
+  <section id="section6" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Qualifications</h2>
+      <h2 class="section-title reveal">Qualifications</h2>
       <div class="qualifications-grid">
-        @if (Model.Qualifications != null)
+        @if (Model.Qualifications is not null)
         {
-          foreach (var qual in Model.Qualifications.Values)
+          foreach (var (key, qual) in Model.Qualifications)
           {
-            <div class="qualification-card">
-              <div class="qualification-content">
-                <div class="qualification-hover-effect"></div>
+            <article class="qualification-card reveal">
+              <div class="qualification-content card-lit">
                 @if (!string.IsNullOrEmpty(qual.ImageBase64))
                 {
                   <div class="image-container">
-                    <img src="@ViewHelpers.GetBase64ImageSrc(qual.ImageBase64)"
-                         alt="@qual.QualificationName"
-                         class="qualification-image" />
+                    <img src="@Url.Action("Image", "Media", new { section = sauraav_portfolio_site.Models.PortfolioSections.Qualifications, key })"
+                         alt="@qual.QualificationName certificate"
+                         class="qualification-image" width="250" height="250" loading="lazy" decoding="async" />
                   </div>
                 }
                 <h3 class="qualification-name">@qual.QualificationName</h3>
               </div>
-            </div>
+            </article>
           }
         }
       </div>
     </div>
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section7')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Skills">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 7: Skills -->
-  <section id="section7" class="portfolio-section">
+  <section id="section7" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Skills</h2>
+      <h2 class="section-title reveal">Skills</h2>
       <div class="skills-container">
-        @if (Model.Skills != null)
+        @if (Model.Skills is not null)
         {
           foreach (var skill in Model.Skills.Values.OrderByDescending(s => s.SkillLevel))
           {
-            <div class="skill-card">
-              <div class="skill-content">
-                <div class="skill-hover-effect"></div>
+            <article class="skill-card reveal">
+              <div class="skill-content card-lit">
                 <div class="skill-info">
                   <h3 class="skill-name">@skill.SkillName</h3>
                   <div class="skill-level-container">
-                    <div class="skill-bar">
+                    <div class="skill-bar" role="meter" aria-valuemin="0" aria-valuemax="10" aria-valuenow="@skill.SkillLevel" aria-label="@skill.SkillName level">
                       <div class="skill-progress" data-level="@skill.SkillLevel"></div>
                     </div>
                     <span class="skill-level-text">@skill.SkillLevel/10</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </article>
           }
         }
       </div>
     </div>
-    <br /><br /><br />
-    <button class="scroll-button cyber-button" onclick="scrollToSection('section8')">
-      <i class="fas fa-chevron-down"></i>
+    <button class="scroll-button cyber-button" type="button" data-scroll-to="@Next()" aria-label="Scroll to Tech Stack">
+      <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
     </button>
   </section>
 
   <!-- Section 8: Tech Stack -->
-  <section id="section8" class="portfolio-section">
+  <section id="section8" class="portfolio-section cv-auto">
     <div class="section-content">
-      <h2 class="section-title">Tech Stack</h2>
+      <h2 class="section-title reveal">Tech Stack</h2>
       <div class="tech-stack-container">
-        <div class="tech-icon-wrapper" data-tech="C#"><img src="~/images/csharp.png" alt="C#" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Java"><img src="~/images/java.png" alt="Java" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="JavaScript"><img src="~/images/javascript.png" alt="JavaScript" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Kotlin"><img src="~/images/kotlin.png" alt="Kotlin" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Delphi"><img src="~/images/delphi.png" alt="Delphi" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="HTML"><img src="~/images/html.png" alt="HTML" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="CSS"><img src="~/images/css.png" alt="CSS" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech=".NET"><img src="~/images/dotnet.png" alt=".NET" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="SQL Server"><img src="~/images/mssqlserver.png" alt="SQL Server" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="MySQL"><img src="~/images/mysql.png" alt="MySQL" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="MongoDB"><img src="~/images/mongodb.png" alt="MongoDB" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Firebase"><img src="~/images/firebase.png" alt="Firebase" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="GitHub"><img src="~/images/github.png" alt="GitHub" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Azure"><img src="~/images/azure.png" alt="Azure" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Linux"><img src="~/images/linux.png" alt="Linux" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Unity"><img src="~/images/unity.png" alt="Unity" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Godot"><img src="~/images/godot.png" alt="Godot" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="ChatGPT"><img src="~/images/chatgpt.png" alt="ChatGPT" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Claude"><img src="~/images/claude.png" alt="Claude" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="LLaMA"><img src="~/images/llama.png" alt="LLaMA" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="LaTeX"><img src="~/images/latex.png" alt="LaTeX" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Blender"><img src="~/images/blender.png" alt="Blender" class="tech-icon" /></div>
-        <div class="tech-icon-wrapper" data-tech="Photoshop"><img src="~/images/photoshop.png" alt="Photoshop" class="tech-icon" /></div>
+        @foreach (var (file, label) in new[]
+        {
+          ("csharp", "C#"), ("java", "Java"), ("javascript", "JavaScript"), ("kotlin", "Kotlin"), ("delphi", "Delphi"),
+          ("html", "HTML"), ("css", "CSS"), ("dotnet", ".NET"), ("mssqlserver", "SQL Server"), ("mysql", "MySQL"),
+          ("mongodb", "MongoDB"), ("firebase", "Firebase"), ("github", "GitHub"), ("azure", "Azure"), ("linux", "Linux"),
+          ("unity", "Unity"), ("godot", "Godot"), ("chatgpt", "ChatGPT"), ("claude", "Claude"), ("llama", "LLaMA"),
+          ("latex", "LaTeX"), ("blender", "Blender"), ("photoshop", "Photoshop"),
+        })
+        {
+          <div class="tech-icon-wrapper reveal" data-tech="@label">
+            <img src="~/images/@(file).webp" alt="@label" class="tech-icon" width="120" height="120" loading="lazy" decoding="async" />
+          </div>
+        }
       </div>
     </div>
   </section>
 
-  <script src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script src="~/js/_layout.js" asp-append-version="true"></script>
-  <script src="~/js/stars_bg.js" asp-append-version="true"></script>
-  <script type="module" src="~/js/dynamic_typed.js" asp-append-version="true"></script>
-  <script src="~/js/parallax.js" asp-append-version="true"></script>
-  <script src="~/js/scroll_logic.js" asp-append-version="true"></script>
-  <script src="~/js/fly_out_menu.js" asp-append-version="true"></script>
-  <script src="~/js/particle_effects.js" asp-append-version="true"></script>
-  <script src="~/js/projects_section.js" asp-append-version="true"></script>
-  <script src="~/js/experience_section.js" asp-append-version="true"></script>
-  <script src="~/js/qualifications_section.js" asp-append-version="true"></script>
-  <script src="~/js/education_section.js" asp-append-version="true"></script>
-  <script src="~/js/summary_section.js" asp-append-version="true"></script>
-  <script src="~/js/skills_section.js" asp-append-version="true"></script>
-  <script src="~/js/section_animations.js" asp-append-version="true"></script>
-  <script src="~/js/tech_stack_section.js" asp-append-version="true"></script>
+  <script src="~/js/portfolio/starfield.js" asp-append-version="true" defer></script>
+  <script src="~/js/portfolio/effects.js" asp-append-version="true" defer></script>
+  <script src="~/js/portfolio/sections.js" asp-append-version="true" defer></script>
 </body>
 </html>
