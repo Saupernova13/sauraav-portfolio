@@ -1,109 +1,139 @@
 @using Microsoft.AspNetCore.Antiforgery
+@using sauraav_portfolio_site.Models
 @inject IAntiforgery Antiforgery
 @{
   ViewData["Title"] = "Admin";
+  var tabs = new[]
+  {
+    (Id: PortfolioSections.Summary, Label: "Summary"),
+    (Id: PortfolioSections.Education, Label: "Education"),
+    (Id: PortfolioSections.Experience, Label: "Experience"),
+    (Id: PortfolioSections.Projects, Label: "Projects"),
+    (Id: PortfolioSections.Qualifications, Label: "Qualifications"),
+    (Id: PortfolioSections.Skills, Label: "Skills"),
+  };
 }
 
 <meta name="__RequestVerificationToken" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken">
 
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Portfolio Admin</h3>
-    <form asp-controller="Account" asp-action="Logout" method="post">
-      <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
-    </form>
+<div class="container-xl py-3 py-md-4">
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-0">Portfolio Admin</h1>
+      <p class="text-secondary mb-0 small">Changes go live as soon as they are saved.</p>
+    </div>
+    <span class="badge rounded-pill bg-dark border" id="connectionState" aria-live="polite">Loading…</span>
   </div>
 
-  <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">Summary</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">Education</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">Experience</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">Projects</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications" type="button" role="tab">Qualifications</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab">Skills</button>
-    </li>
+  <ul class="nav nav-pills admin-tabs flex-nowrap overflow-auto mb-3" id="adminTabs" role="tablist">
+    @for (var i = 0; i < tabs.Length; i++)
+    {
+      <li class="nav-item" role="presentation">
+        <button class="nav-link @(i == 0 ? "active" : "")" id="@(tabs[i].Id)-tab" data-bs-toggle="tab" data-bs-target="#@(tabs[i].Id)" type="button" role="tab" aria-controls="@tabs[i].Id" aria-selected="@(i == 0 ? "true" : "false")">
+          @tabs[i].Label <span class="badge admin-count" data-count="@tabs[i].Id" hidden></span>
+        </button>
+      </li>
+    }
   </ul>
 
   <div class="tab-content" id="adminTabContent">
 
     <!-- Summary -->
-    <div class="tab-pane fade show active" id="summary" role="tabpanel">
-      <div class="card mt-3">
+    <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab" tabindex="0">
+      <div class="card admin-card">
         <div class="card-body">
-          <h5 class="card-title">Summary</h5>
-          <form id="summaryForm">
-            <div class="form-group">
-              <textarea class="form-control" rows="5" id="summaryText" required></textarea>
+          <h2 class="h5 card-title">About Me</h2>
+          <form id="summaryForm" data-summary-form novalidate>
+            <div class="mb-3">
+              <label for="summaryText" class="form-label">Summary text</label>
+              <textarea class="form-control" rows="8" id="summaryText" name="summary" maxlength="5000" required placeholder="A few paragraphs about you. Blank lines start new paragraphs."></textarea>
+              <div class="invalid-feedback" data-error-for="summary"></div>
+              <div class="form-text"><span data-char-count="summaryText">0</span> / 5000</div>
             </div>
-            <button type="submit" class="btn btn-primary mt-2">Save Summary</button>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary" data-submit>
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span>Save summary
+              </button>
+            </div>
           </form>
         </div>
       </div>
     </div>
 
     <!-- Education -->
-    <div class="tab-pane fade" id="education" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Education</h5>
-          <form id="educationForm">
-            <input type="hidden" id="eduIsEdit" value="false">
-            <input type="hidden" id="eduOriginalSchool" value="">
-            <div class="form-group">
-              <label>School Name</label>
-              <input type="text" class="form-control" id="schoolName" required>
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control" id="educationDescription"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" class="form-control" id="location">
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="hasStartDate">
-                  <label class="custom-control-label" for="hasStartDate">Has Start Date</label>
+    <div class="tab-pane fade" id="education" role="tabpanel" aria-labelledby="education-tab" tabindex="0">
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-form-title>Add education</h2>
+              <form data-section="education" data-name-field="schoolName" novalidate>
+                <div class="alert alert-info py-2 d-flex justify-content-between align-items-center" data-editing-banner hidden>
+                  <span>Editing <strong data-editing-name></strong></span>
+                  <button type="button" class="btn btn-sm btn-outline-info" data-cancel-edit>Cancel</button>
                 </div>
-                <input type="date" class="form-control" id="eduStartDate" disabled>
-              </div>
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="hasEndDate">
-                  <label class="custom-control-label" for="hasEndDate">Has End Date</label>
+                <div class="mb-3">
+                  <label class="form-label" for="eduSchool">School name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="eduSchool" name="schoolName" maxlength="200" required>
+                  <div class="invalid-feedback" data-error-for="schoolName"></div>
                 </div>
-                <input type="date" class="form-control" id="eduEndDate" disabled>
+                <div class="mb-3">
+                  <label class="form-label" for="eduDescription">Description</label>
+                  <textarea class="form-control" id="eduDescription" name="description" rows="3" maxlength="2000"></textarea>
+                  <div class="invalid-feedback" data-error-for="description"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="eduLocation">Location</label>
+                  <input type="text" class="form-control" id="eduLocation" name="location" maxlength="200">
+                  <div class="invalid-feedback" data-error-for="location"></div>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-sm-6">
+                    <div class="form-check mb-1">
+                      <input class="form-check-input" type="checkbox" id="eduHasStart" data-enables="eduStart">
+                      <label class="form-check-label" for="eduHasStart">Start date</label>
+                    </div>
+                    <input type="date" class="form-control" id="eduStart" name="startDate" disabled>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check mb-1">
+                      <input class="form-check-input" type="checkbox" id="eduHasEnd" data-enables="eduEnd">
+                      <label class="form-check-label" for="eduHasEnd">End date</label>
+                    </div>
+                    <input type="date" class="form-control" id="eduEnd" name="endDate" disabled>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="eduImageFile">Image</label>
+                  <input type="file" class="form-control" id="eduImageFile" accept="image/*" data-image-for="eduImage">
+                  <input type="hidden" id="eduImage" name="imageBase64">
+                  <div class="invalid-feedback" data-error-for="imageBase64"></div>
+                  <div class="admin-preview mt-2" hidden>
+                    <img alt="Selected image preview" class="admin-preview-img" data-preview-for="eduImage">
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-clear-image="eduImage">Remove image</button>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" data-submit>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span><span data-submit-label>Save</span>
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title">Existing education</h2>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle admin-table">
+                  <thead><tr><th scope="col">School</th><th scope="col" class="d-none d-md-table-cell">Location</th><th scope="col">Period</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                  <tbody data-list="education"></tbody>
+                </table>
               </div>
-            </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="eduImage" accept="image/*">
-              <img id="eduImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Education image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Education</button>
-            <button type="button" class="btn btn-secondary" id="eduClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Education</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>School</th><th>Location</th><th>Duration</th><th>Actions</th></tr></thead>
-                <tbody id="educationList"></tbody>
-              </table>
+              <p class="text-secondary small mb-0" data-empty-for="education" hidden>No education entries yet.</p>
             </div>
           </div>
         </div>
@@ -111,58 +141,80 @@
     </div>
 
     <!-- Experience -->
-    <div class="tab-pane fade" id="experience" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Experience</h5>
-          <form id="experienceForm">
-            <input type="hidden" id="expIsEdit" value="false">
-            <input type="hidden" id="expOriginalTitle" value="">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control" id="expTitle" required>
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" class="form-control" id="expLocation">
-            </div>
-            <div class="form-group">
-              <label>Accomplishments</label>
-              <div id="accomplishmentsList"></div>
-              <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="addAccomplishment('')">Add Accomplishment</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="expHasStartDate">
-                  <label class="custom-control-label" for="expHasStartDate">Has Start Date</label>
+    <div class="tab-pane fade" id="experience" role="tabpanel" aria-labelledby="experience-tab" tabindex="0">
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-form-title>Add experience</h2>
+              <form data-section="experience" data-name-field="title" novalidate>
+                <div class="alert alert-info py-2 d-flex justify-content-between align-items-center" data-editing-banner hidden>
+                  <span>Editing <strong data-editing-name></strong></span>
+                  <button type="button" class="btn btn-sm btn-outline-info" data-cancel-edit>Cancel</button>
                 </div>
-                <input type="date" class="form-control" id="expStartDate" disabled>
-              </div>
-              <div class="form-group col-md-6">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="expHasEndDate">
-                  <label class="custom-control-label" for="expHasEndDate">Has End Date</label>
+                <div class="mb-3">
+                  <label class="form-label" for="expTitle">Title <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="expTitle" name="title" maxlength="200" required>
+                  <div class="invalid-feedback" data-error-for="title"></div>
                 </div>
-                <input type="date" class="form-control" id="expEndDate" disabled>
+                <div class="mb-3">
+                  <label class="form-label" for="expLocation">Location</label>
+                  <input type="text" class="form-control" id="expLocation" name="location" maxlength="200">
+                  <div class="invalid-feedback" data-error-for="location"></div>
+                </div>
+                <fieldset class="mb-3">
+                  <legend class="form-label fs-6">Accomplishments</legend>
+                  <div class="d-grid gap-2" data-list-field="accomplishments"></div>
+                  <div class="invalid-feedback" data-error-for="accomplishments"></div>
+                  <button type="button" class="btn btn-sm btn-outline-light mt-2" data-add-list-item="accomplishments">Add accomplishment</button>
+                </fieldset>
+                <div class="row g-3 mb-3">
+                  <div class="col-sm-6">
+                    <div class="form-check mb-1">
+                      <input class="form-check-input" type="checkbox" id="expHasStart" data-enables="expStart">
+                      <label class="form-check-label" for="expHasStart">Start date</label>
+                    </div>
+                    <input type="date" class="form-control" id="expStart" name="startDate" disabled>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check mb-1">
+                      <input class="form-check-input" type="checkbox" id="expHasEnd" data-enables="expEnd">
+                      <label class="form-check-label" for="expHasEnd">End date</label>
+                    </div>
+                    <input type="date" class="form-control" id="expEnd" name="endDate" disabled>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="expImageFile">Image</label>
+                  <input type="file" class="form-control" id="expImageFile" accept="image/*" data-image-for="expImage">
+                  <input type="hidden" id="expImage" name="imageBase64">
+                  <div class="invalid-feedback" data-error-for="imageBase64"></div>
+                  <div class="admin-preview mt-2" hidden>
+                    <img alt="Selected image preview" class="admin-preview-img" data-preview-for="expImage">
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-clear-image="expImage">Remove image</button>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" data-submit>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span><span data-submit-label>Save</span>
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title">Existing experience</h2>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle admin-table">
+                  <thead><tr><th scope="col">Title</th><th scope="col" class="d-none d-md-table-cell">Location</th><th scope="col">Period</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                  <tbody data-list="experience"></tbody>
+                </table>
               </div>
-            </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="expImage" accept="image/*">
-              <img id="expImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Experience image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Experience</button>
-            <button type="button" class="btn btn-secondary" id="expClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Experience</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Title</th><th>Location</th><th>Duration</th><th>Actions</th></tr></thead>
-                <tbody id="experienceList"></tbody>
-              </table>
+              <p class="text-secondary small mb-0" data-empty-for="experience" hidden>No experience entries yet.</p>
             </div>
           </div>
         </div>
@@ -170,41 +222,66 @@
     </div>
 
     <!-- Projects -->
-    <div class="tab-pane fade" id="projects" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Project</h5>
-          <form id="projectForm">
-            <input type="hidden" id="projIsEdit" value="false">
-            <input type="hidden" id="projOriginalName" value="">
-            <div class="form-group">
-              <label>Project Name</label>
-              <input type="text" class="form-control" id="projectName" required>
+    <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab" tabindex="0">
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-form-title>Add project</h2>
+              <form data-section="projects" data-name-field="projectName" novalidate>
+                <div class="alert alert-info py-2 d-flex justify-content-between align-items-center" data-editing-banner hidden>
+                  <span>Editing <strong data-editing-name></strong></span>
+                  <button type="button" class="btn btn-sm btn-outline-info" data-cancel-edit>Cancel</button>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="projName">Project name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="projName" name="projectName" maxlength="200" required>
+                  <div class="invalid-feedback" data-error-for="projectName"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="projDescription">Description</label>
+                  <textarea class="form-control" id="projDescription" name="description" rows="3" maxlength="2000"></textarea>
+                  <div class="invalid-feedback" data-error-for="description"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="projLink">Project link</label>
+                  <input type="url" class="form-control" id="projLink" name="projectLink" maxlength="500" placeholder="https://" inputmode="url">
+                  <div class="invalid-feedback" data-error-for="projectLink"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="projVideoFile">Demo video (MP4 or WebM, up to 100 MB)</label>
+                  <input type="file" class="form-control" id="projVideoFile" accept="video/mp4,video/webm" data-video-for="projVideo">
+                  <input type="hidden" id="projVideo" name="demoVideoPath">
+                  <div class="invalid-feedback" data-error-for="demoVideoPath"></div>
+                  <div class="admin-preview mt-2" hidden>
+                    <video class="admin-preview-video" controls muted playsinline preload="metadata" data-preview-for="projVideo"></video>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-clear-video="projVideo">Remove video</button>
+                  </div>
+                  <div class="progress mt-2" hidden data-upload-progress>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" data-submit>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span><span data-submit-label>Save</span>
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+              </form>
             </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control" id="projectDescription"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Project Link</label>
-              <input type="url" class="form-control" id="projectLink">
-            </div>
-            <div class="form-group">
-              <label>Demo Video</label>
-              <input type="file" class="form-control-file" id="projectVideo" accept="video/*">
-              <video id="projectVideoPreview" class="mt-2" style="max-width:200px;display:none;" controls></video>
-            </div>
-            <button type="submit" class="btn btn-primary">Save Project</button>
-            <button type="button" class="btn btn-secondary" id="projClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Projects</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Name</th><th>Link</th><th>Demo</th><th>Actions</th></tr></thead>
-                <tbody id="projectsList"></tbody>
-              </table>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title">Existing projects</h2>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle admin-table">
+                  <thead><tr><th scope="col">Name</th><th scope="col">Link</th><th scope="col" class="d-none d-md-table-cell">Demo</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                  <tbody data-list="projects"></tbody>
+                </table>
+              </div>
+              <p class="text-secondary small mb-0" data-empty-for="projects" hidden>No projects yet.</p>
             </div>
           </div>
         </div>
@@ -212,33 +289,53 @@
     </div>
 
     <!-- Qualifications -->
-    <div class="tab-pane fade" id="qualifications" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Qualification</h5>
-          <form id="qualificationForm">
-            <input type="hidden" id="qualIsEdit" value="false">
-            <input type="hidden" id="qualOriginalName" value="">
-            <div class="form-group">
-              <label>Qualification Name</label>
-              <input type="text" class="form-control" id="qualificationName" required>
+    <div class="tab-pane fade" id="qualifications" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-form-title>Add qualification</h2>
+              <form data-section="qualifications" data-name-field="qualificationName" novalidate>
+                <div class="alert alert-info py-2 d-flex justify-content-between align-items-center" data-editing-banner hidden>
+                  <span>Editing <strong data-editing-name></strong></span>
+                  <button type="button" class="btn btn-sm btn-outline-info" data-cancel-edit>Cancel</button>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="qualName">Qualification name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="qualName" name="qualificationName" maxlength="200" required>
+                  <div class="invalid-feedback" data-error-for="qualificationName"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="qualImageFile">Certificate image</label>
+                  <input type="file" class="form-control" id="qualImageFile" accept="image/*" data-image-for="qualImage">
+                  <input type="hidden" id="qualImage" name="imageBase64">
+                  <div class="invalid-feedback" data-error-for="imageBase64"></div>
+                  <div class="admin-preview mt-2" hidden>
+                    <img alt="Selected image preview" class="admin-preview-img" data-preview-for="qualImage">
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-clear-image="qualImage">Remove image</button>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" data-submit>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span><span data-submit-label>Save</span>
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+              </form>
             </div>
-            <div class="form-group">
-              <label>Image</label>
-              <input type="file" class="form-control-file" id="qualificationImage" accept="image/*">
-              <img id="qualImagePreview" class="mt-2" style="max-width:200px;display:none;" alt="Qualification image preview">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Qualification</button>
-            <button type="button" class="btn btn-secondary" id="qualClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Qualifications</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Qualification</th><th>Actions</th></tr></thead>
-                <tbody id="qualificationsList"></tbody>
-              </table>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title">Existing qualifications</h2>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle admin-table">
+                  <thead><tr><th scope="col">Qualification</th><th scope="col">Image</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                  <tbody data-list="qualifications"></tbody>
+                </table>
+              </div>
+              <p class="text-secondary small mb-0" data-empty-for="qualifications" hidden>No qualifications yet.</p>
             </div>
           </div>
         </div>
@@ -246,32 +343,48 @@
     </div>
 
     <!-- Skills -->
-    <div class="tab-pane fade" id="skills" role="tabpanel">
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5 class="card-title">Add / Edit Skill</h5>
-          <form id="skillForm">
-            <input type="hidden" id="skillIsEdit" value="false">
-            <input type="hidden" id="skillOriginalName" value="">
-            <div class="form-group">
-              <label>Skill Name</label>
-              <input type="text" class="form-control" id="skillName" required>
+    <div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab" tabindex="0">
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-form-title>Add skill</h2>
+              <form data-section="skills" data-name-field="skillName" novalidate>
+                <div class="alert alert-info py-2 d-flex justify-content-between align-items-center" data-editing-banner hidden>
+                  <span>Editing <strong data-editing-name></strong></span>
+                  <button type="button" class="btn btn-sm btn-outline-info" data-cancel-edit>Cancel</button>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="skillName">Skill name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="skillName" name="skillName" maxlength="200" required>
+                  <div class="invalid-feedback" data-error-for="skillName"></div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="skillLevel">Level: <output for="skillLevel" data-range-output="skillLevel">5</output> / @SkillsModel.MaxLevel</label>
+                  <input type="range" class="form-range" id="skillLevel" name="skillLevel" data-type="int" min="@SkillsModel.MinLevel" max="@SkillsModel.MaxLevel" value="5">
+                  <div class="invalid-feedback" data-error-for="skillLevel"></div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" data-submit>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" hidden></span><span data-submit-label>Save</span>
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+              </form>
             </div>
-            <div class="form-group">
-              <label>Skill Level (1-10): <span id="skillLevelValue">5</span></label>
-              <input type="range" class="form-control-range" id="skillLevel" min="1" max="10" value="5">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Skill</button>
-            <button type="button" class="btn btn-secondary" id="skillClearForm">Clear</button>
-          </form>
-
-          <div class="mt-4">
-            <h5>Existing Skills</h5>
-            <div class="table-responsive">
-              <table class="table">
-                <thead><tr><th>Skill</th><th>Level</th><th>Actions</th></tr></thead>
-                <tbody id="skillsList"></tbody>
-              </table>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card admin-card">
+            <div class="card-body">
+              <h2 class="h5 card-title">Existing skills</h2>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle admin-table">
+                  <thead><tr><th scope="col">Skill</th><th scope="col">Level</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                  <tbody data-list="skills"></tbody>
+                </table>
+              </div>
+              <p class="text-secondary small mb-0" data-empty-for="skills" hidden>No skills yet.</p>
             </div>
           </div>
         </div>
@@ -281,7 +394,27 @@
   </div>
 </div>
 
+<!-- Delete confirmation -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content admin-card">
+      <div class="modal-header border-0">
+        <h2 class="modal-title h5" id="confirmDeleteTitle">Delete entry?</h2>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0">This removes <strong data-delete-name></strong> from the live site. It cannot be undone.</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep it</button>
+        <button type="button" class="btn btn-danger" data-confirm-delete>Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
 @section Scripts {
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="~/js/admin/admin.js" asp-append-version="true"></script>
+  <script src="~/js/admin/admin.js" asp-append-version="true" defer></script>
 }

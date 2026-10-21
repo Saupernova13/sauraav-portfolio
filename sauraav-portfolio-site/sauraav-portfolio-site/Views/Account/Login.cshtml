@@ -1,31 +1,39 @@
 @model sauraav_portfolio_site.Models.LoginViewModel
 @{
-    ViewData["Title"] = "Admin Login";
+  ViewData["Title"] = "Admin Login";
 }
 
-<div class="container mt-5" style="max-width:400px">
-  <h2 class="mb-4">Admin Login</h2>
+<div class="login-wrapper">
+  <div class="card admin-card login-card">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="h3 mb-1">Admin Login</h1>
+      <p class="text-secondary mb-4">Sign in to manage the portfolio.</p>
 
-  <form asp-action="Login" method="post">
-    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+      <form asp-action="Login" method="post" novalidate>
+        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
 
-    <div class="mb-3">
-      <label asp-for="Username" class="form-label"></label>
-      <input asp-for="Username" class="form-control" autocomplete="username" />
-      <span asp-validation-for="Username" class="text-danger"></span>
+        <div class="mb-3">
+          <label asp-for="Username" class="form-label"></label>
+          <input asp-for="Username" class="form-control form-control-lg" autocomplete="username" autofocus required />
+          <span asp-validation-for="Username" class="invalid-feedback d-block"></span>
+        </div>
+
+        <div class="mb-4">
+          <label asp-for="Password" class="form-label"></label>
+          <div class="input-group input-group-lg">
+            <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" required />
+            <button class="btn btn-outline-secondary" type="button" data-toggle-password="Password" aria-label="Show password" aria-pressed="false">Show</button>
+          </div>
+          <span asp-validation-for="Password" class="invalid-feedback d-block"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100">Log in</button>
+      </form>
     </div>
-
-    <div class="mb-3">
-      <label asp-for="Password" class="form-label"></label>
-      <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
-      <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Login</button>
-  </form>
+  </div>
 </div>
 
 @section Scripts {
-  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+  <script src="~/js/admin/login.js" asp-append-version="true" defer></script>
 }

@@ -1,141 +1,39 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="admin-html">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sauraav Jayrajh - Portfolio</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/sauraav_portfolio_site.styles.css" asp-append-version="true" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <style>
-        header {
-            transition: transform 0.3s ease-in-out;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        @@media (min-width: 768px) {
-            /* Desktop styles */
-            .hover-area {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 60px;
-                z-index: 999;
-            }
-
-            .hide-header header {
-                transform: translateY(-100%);
-            }
-
-            .neon-line {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                z-index: 998;
-                opacity: 0;
-                transition: opacity 0.3s ease-in-out;
-            }
-
-                .neon-line::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: #4B7ABE;
-                    box-shadow: 0 0 10px #528cdf, 0 0 15px #528cdf, 0 0 25px #528cdf, 0 0 50px #528cdf;
-                    animation: globalPulse 2s ease-in-out infinite;
-                }
-
-            .hide-header .neon-line {
-                opacity: 1;
-            }
-
-            .neon-line, .hover-area {
-                cursor: pointer;
-            }
-        }
-
-        /* Mobile optimizations */
-        @@media (max-width: 767px) {
-            .navbar-brand {
-                font-size: 1.1rem;
-                padding: 0.5rem 0;
-            }
-
-            .container-fluid {
-                padding: 0 10px;
-            }
-
-            .navbar {
-                padding: 0.5rem 0;
-            }
-
-            .hover-area, .neon-line {
-                display: none;
-            }
-
-            header {
-                position: sticky;
-                transform: none !important;
-            }
-
-            body {
-                padding-top: 0 !important;
-            }
-        }
-
-        body {
-            padding-top: 60px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#121212">
+  <title>@ViewData["Title"] - Sauraav Jayrajh</title>
+  <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
-<body class="hide-header">
-    <div class="neon-line"></div>
-    <div class="hover-area"></div>
-@*    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">sauraav_portfolio_site</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>  *@
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="admin-body">
+  <header class="admin-topbar">
+    <nav class="container-fluid d-flex align-items-center justify-content-between gap-3 py-2">
+      <a class="admin-brand" asp-controller="Home" asp-action="Index">
+        <span class="admin-brand-dot" aria-hidden="true"></span>
+        Sauraav Jayrajh
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-sm btn-outline-light" asp-controller="Home" asp-action="Index" target="_blank" rel="noopener">View site</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+          <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Log out</button>
+          </form>
+        }
+      </div>
+    </nav>
+  </header>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/_layout.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+  <main class="admin-main">
+    @RenderBody()
+  </main>
+
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+  @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
