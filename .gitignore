@@ -397,3 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /sauraav-portfolio-site/sauraav-portfolio-site/wwwroot/videos
+
+## Uploaded media (served from wwwroot/videos at runtime)
+wwwroot/videos/

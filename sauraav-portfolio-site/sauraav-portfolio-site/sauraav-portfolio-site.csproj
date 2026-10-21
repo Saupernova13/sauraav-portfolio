@@ -2,16 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>sauraav_portfolio_site</RootNamespace>
     <UserSecretsId>7a2d1748-138b-4aa5-a387-1aa75f260d9d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- FirebaseAdmin supplies Google.Apis.Auth, used to mint access tokens for the Realtime Database. -->
     <PackageReference Include="FirebaseAdmin" Version="3.1.0" />
     <PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="sauraav-portfolio-site.Tests" />
   </ItemGroup>
 
 </Project>
