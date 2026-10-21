@@ -1,7 +1,7 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using sauraav_portfolio_site.Models;
-using sauraav_portfolio_site.Services;
-using System.Diagnostics;
+using sauraav_portfolio_site.Services.Portfolio;
 
 namespace sauraav_portfolio_site.Controllers;
 
@@ -19,16 +19,18 @@ public sealed class HomeController : Controller
         _portfolioService = portfolioService;
     }
 
-    public async Task<IActionResult> Index()
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try
         {
-            var viewModel = await _portfolioService.GetPortfolioAsync();
+            var viewModel = await _portfolioService.GetPortfolioAsync(cancellationToken);
             return View(viewModel);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             LogPortfolioError(_logger, ex);
+            Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

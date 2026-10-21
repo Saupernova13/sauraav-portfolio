@@ -1,176 +1,123 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using sauraav_portfolio_site.Filters;
-using sauraav_portfolio_site.Helpers;
 using sauraav_portfolio_site.Models;
-using sauraav_portfolio_site.Services;
-using System.Text.Json;
+using sauraav_portfolio_site.Services.Media;
+using sauraav_portfolio_site.Services.Portfolio;
+using sauraav_portfolio_site.Services.Sections;
 
 namespace sauraav_portfolio_site.Controllers;
 
+/// <summary>
+/// Admin API. Keyed sections share one set of endpoints and are resolved by name through
+/// <see cref="ISectionRegistry"/>, so adding a section needs no controller change.
+/// </summary>
 [Authorize]
+[AutoValidateAntiforgeryToken]
 [ServiceFilter(typeof(ApiExceptionFilter))]
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[Route("Admin")]
 public sealed class AdminController : Controller
 {
-    private static readonly JsonSerializerOptions CaseInsensitiveOptions = new() { PropertyNameCaseInsensitive = true };
+    private readonly ISectionRegistry _sections;
+    private readonly ISummaryRepository _summary;
+    private readonly IPortfolioCache _cache;
+    private readonly IMediaStorage _media;
 
-    private readonly IFirebaseService _firebase;
+    public AdminController(ISectionRegistry sections, ISummaryRepository summary, IPortfolioCache cache, IMediaStorage media)
+    {
+        _sections = sections;
+        _summary = summary;
+        _cache = cache;
+        _media = media;
+    }
 
-    public AdminController(IFirebaseService firebase) => _firebase = firebase;
-
+    [HttpGet("")]
     public IActionResult Index() => View();
 
-    // Summary
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveSummary([FromBody] SummaryModel summary)
+    [HttpGet("Data")]
+    public async Task<IActionResult> Data(CancellationToken cancellationToken)
     {
-        await _firebase.SetData("summary", summary);
-        return Json(new { success = true });
-    }
+        var summaryTask = _summary.GetAsync(cancellationToken);
+        var sectionTasks = _sections.All.Select(s => s.GetAllAsync(cancellationToken)).ToArray();
+        await Task.WhenAll(sectionTasks.Append<Task>(summaryTask));
 
-    // Education
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddEducation([FromBody] EducationModel education)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(education.SchoolName ?? string.Empty);
-        await _firebase.SetData($"education/{key}", education);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteEducation(string schoolName)
-    {
-        await _firebase.DeleteData($"education/{FirebaseKeySanitizer.Sanitize(schoolName)}");
-        return Json(new { success = true });
-    }
-
-    // Experience
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddExperience([FromBody] WorkExperienceModel experience)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(experience.Title ?? string.Empty);
-        await _firebase.SetData($"experience/{key}", experience);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteExperience(string title)
-    {
-        await _firebase.DeleteData($"experience/{FirebaseKeySanitizer.Sanitize(title)}");
-        return Json(new { success = true });
-    }
-
-    // Projects
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddProject([FromForm] IFormFile? video, [FromForm] string projectData)
-    {
-        var project = JsonSerializer.Deserialize<ProjectModel>(projectData, CaseInsensitiveOptions);
-
-        if (project is null)
-            return Json(new { success = false, message = "Invalid project data" });
-
-        if (video is not null)
-            project.DemoVideoPath = await SaveVideoAsync(video);
-
-        var key = FirebaseKeySanitizer.Sanitize(project.ProjectName ?? string.Empty);
-        await _firebase.SetData($"projects/{key}", new
+        var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
-            projectName = project.ProjectName,
-            description = project.Description,
-            projectLink = project.ProjectLink,
-            demoVideoPath = project.DemoVideoPath,
-        });
+            [PortfolioSections.Summary] = await summaryTask,
+        };
 
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteProject(string projectName)
-    {
-        await _firebase.DeleteData($"projects/{FirebaseKeySanitizer.Sanitize(projectName)}");
-        return Json(new { success = true });
-    }
-
-    // Qualifications
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddQualification([FromBody] QualificationModel qualification)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(qualification.QualificationName ?? string.Empty);
-        await _firebase.SetData($"qualifications/{key}", qualification);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteQualification(string qualificationName)
-    {
-        await _firebase.DeleteData($"qualifications/{FirebaseKeySanitizer.Sanitize(qualificationName)}");
-        return Json(new { success = true });
-    }
-
-    // Skills
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddSkill([FromBody] SkillsModel skill)
-    {
-        var key = FirebaseKeySanitizer.Sanitize(skill.SkillName ?? string.Empty);
-        await _firebase.SetData($"skills/{key}", skill);
-        return Json(new { success = true });
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeleteSkill(string skillName)
-    {
-        await _firebase.DeleteData($"skills/{FirebaseKeySanitizer.Sanitize(skillName)}");
-        return Json(new { success = true });
-    }
-
-    // Data
-
-    [HttpGet]
-    public async Task<IActionResult> GetAllData()
-    {
-        var summary = _firebase.GetData<SummaryModel>("summary");
-        var education = _firebase.GetData<Dictionary<string, EducationModel>>("education");
-        var experience = _firebase.GetData<Dictionary<string, WorkExperienceModel>>("experience");
-        var projects = _firebase.GetData<Dictionary<string, ProjectModel>>("projects");
-        var qualifications = _firebase.GetData<Dictionary<string, QualificationModel>>("qualifications");
-        var skills = _firebase.GetData<Dictionary<string, SkillsModel>>("skills");
-
-        await Task.WhenAll(summary, education, experience, projects, qualifications, skills);
-
-        return Json(new
+        var index = 0;
+        foreach (var section in _sections.All)
         {
-            summary = await summary,
-            education = await education,
-            experience = await experience,
-            projects = await projects,
-            qualifications = await qualifications,
-            skills = await skills,
-        });
+            payload[section.SectionName] = await sectionTasks[index++];
+        }
+
+        return Json(payload);
     }
 
-    private static async Task<string> SaveVideoAsync(IFormFile video)
+    [HttpPut("Summary")]
+    public async Task<IActionResult> SaveSummary([FromBody] SummaryModel summary, CancellationToken cancellationToken)
     {
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
-        Directory.CreateDirectory(uploadsFolder);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ApiResponse.Invalid(ModelState));
+        }
 
-        var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(video.FileName)}";
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+        await _summary.SaveAsync(summary, cancellationToken);
+        _cache.Invalidate();
+        return Json(ApiResponse.Ok());
+    }
 
-        await using var stream = new FileStream(filePath, FileMode.Create);
-        await video.CopyToAsync(stream);
+    [HttpPost("Sections/{section}")]
+    public async Task<IActionResult> SaveEntry(
+        string section,
+        [FromBody] JsonElement payload,
+        [FromQuery] string? originalKey,
+        CancellationToken cancellationToken)
+    {
+        if (!_sections.TryGet(section, out var admin))
+        {
+            return NotFound(ApiResponse.Fail("Unknown section."));
+        }
 
-        return $"/videos/{uniqueFileName}";
+        var result = await admin.UpsertAsync(payload, originalKey, cancellationToken);
+        return result.Succeeded
+            ? Json(ApiResponse.Ok(result.Key))
+            : BadRequest(ApiResponse.Fail("Please fix the highlighted fields.", result.Errors));
+    }
+
+    [HttpDelete("Sections/{section}/{key}")]
+    public async Task<IActionResult> DeleteEntry(string section, string key, CancellationToken cancellationToken)
+    {
+        if (!_sections.TryGet(section, out var admin))
+        {
+            return NotFound(ApiResponse.Fail("Unknown section."));
+        }
+
+        if (!PortfolioKey.IsValid(key))
+        {
+            return BadRequest(ApiResponse.Fail("Invalid key."));
+        }
+
+        await admin.DeleteAsync(key, cancellationToken);
+        return Json(ApiResponse.Ok(key));
+    }
+
+    [HttpPost("Media/Videos")]
+    [RequestSizeLimit(VideoUploadPolicy.MaxBytes + 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = VideoUploadPolicy.MaxBytes + 1024)]
+    public async Task<IActionResult> UploadVideo(IFormFile? video, CancellationToken cancellationToken)
+    {
+        if (video is null)
+        {
+            return BadRequest(ApiResponse.Fail("Choose a video file to upload."));
+        }
+
+        var saved = await _media.SaveVideoAsync(video, cancellationToken);
+        return saved.Succeeded
+            ? Json(ApiResponse.Ok(saved.Path))
+            : BadRequest(ApiResponse.Fail(saved.Error!));
     }
 }

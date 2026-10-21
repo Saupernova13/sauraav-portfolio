@@ -1,11 +1,19 @@
+using System.Globalization;
+
 namespace sauraav_portfolio_site.Helpers;
 
 public static class ViewHelpers
 {
     public static string FormatDate(string? date)
     {
-        if (string.IsNullOrEmpty(date)) return string.Empty;
-        return DateTime.TryParse(date, out var parsed) ? parsed.ToString("MMM yyyy", System.Globalization.CultureInfo.InvariantCulture) : date;
+        if (string.IsNullOrEmpty(date))
+        {
+            return string.Empty;
+        }
+
+        return DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed)
+            ? parsed.ToString("MMM yyyy", CultureInfo.InvariantCulture)
+            : date;
     }
 
     public static string FormatDateRange(string? start, string? end)
@@ -20,7 +28,4 @@ public static class ViewHelpers
             _ => $"{s} - {e}",
         };
     }
-
-    public static string GetBase64ImageSrc(string? base64) =>
-        string.IsNullOrEmpty(base64) ? string.Empty : $"data:image/jpeg;base64,{base64.Trim()}";
 }
