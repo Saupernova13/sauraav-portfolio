@@ -87,7 +87,7 @@ public sealed class MediaTests : IDisposable
         return [.. header, .. body];
     }
 
-    private static IFormFile FormFile(byte[] bytes, string fileName, string contentType)
+    private static FormFile FormFile(byte[] bytes, string fileName, string contentType)
     {
         var stream = new MemoryStream(bytes);
         return new FormFile(stream, 0, bytes.Length, "video", fileName)
